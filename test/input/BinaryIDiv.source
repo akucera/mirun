@@ -1,0 +1,9 @@
+program BinaryIDiv;
+methods
+sdohtem;
+declare
+int x = 100
+eralced;
+x = x / 3;
+x = x / 17 / 11
+margorp;

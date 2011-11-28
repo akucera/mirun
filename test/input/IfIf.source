@@ -1,0 +1,20 @@
+program IfIf;
+methods
+sdohtem;
+declare
+int x = 97
+eralced;
+if(x>1)
+ if(x>2)
+  println(x)
+ fi;
+ if(x <= 2)
+  println(x-1)
+ fi
+fi;
+if(x <= 1)
+ println(x - 2)
+fi
+margorp;
+
+

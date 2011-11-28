@@ -1,0 +1,15 @@
+program FactorialMethod;
+methods
+    method faktorial int(int b;)
+        for(int j = b - 1; j >= 1; j = j - 1;)
+            b = b * j
+        rof
+        return b
+    dohtem
+sdohtem;
+declare
+    int b = 0
+eralced;
+    b = method faktorial(8;);
+    println(b)
+margorp;

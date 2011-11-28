@@ -1,0 +1,11 @@
+program MethodVoid;
+methods
+ method print void()
+  println(10)
+  return
+ dohtem
+sdohtem;
+declare
+eralced;
+ method print()
+margorp;

@@ -1,0 +1,16 @@
+program IfEQ1;
+methods
+sdohtem;
+declare
+int x = 42
+eralced;
+if(x==42)
+ x=x+20
+fi;
+if(x==42)
+ x=x+10
+fi;
+if(x!=42)
+ x=x-10
+fi
+margorp;

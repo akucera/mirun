@@ -1,0 +1,11 @@
+program While1;
+methods
+sdohtem;
+declare
+ int n = 10
+eralced;
+ while(n<20)
+  println(n);
+  n = n + 1
+ elihw
+margorp;

@@ -1,0 +1,23 @@
+program
+margorp
+methods
+sdohtem
+method
+dohtem
+int
+real
+void
+println
+declare
+while
+if
+for
+eralced
+elihw
+fi
+rof
+return
+123
+1.23
+ident
+; ( ) . = + - * / == != < > <= >=

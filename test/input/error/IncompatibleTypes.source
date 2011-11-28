@@ -1,0 +1,9 @@
+program IncompatibleTypes;
+methods
+sdohtem;
+declare
+int i = 42;
+real r = 0.0
+eralced;
+r = i
+margorp;

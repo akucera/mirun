@@ -1,0 +1,10 @@
+program Operators;
+methods
+sdohtem;
+declare
+eralced;
+    println(1-2-3-4+9);
+    println(100 / 25 / 4);
+    println( 3+2*30 - 62);
+    println(4-3)
+margorp;

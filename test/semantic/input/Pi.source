@@ -1,0 +1,16 @@
+program Pi;
+methods
+sdohtem;
+declare
+    int i = 3;
+    int s = 0 - 1;
+    real pi = 1.0
+eralced;
+    while (i<2147483647)
+        pi = pi+s/i;
+        s = 0 - s;
+        i = i + 2
+    elihw;
+    pi = pi * 4.0;
+    println(pi)
+margorp;

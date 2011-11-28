@@ -1,0 +1,16 @@
+program IfEQ2;
+methods
+sdohtem;
+declare
+real y = 56.0
+eralced;
+if(y==56.78)
+ y=y*3.45
+fi;
+if(y==56.78)
+  y=y*2.34
+fi;
+if(y!=56.78)
+ y=y/5.43
+fi
+margorp;

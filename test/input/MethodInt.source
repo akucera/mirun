@@ -1,0 +1,12 @@
+program MethodInt;
+methods
+ method integer int(int i;)
+  return i
+ dohtem
+sdohtem;
+declare
+ int i = 0
+eralced;
+ i = method integer(10;);
+ println(i)
+margorp;

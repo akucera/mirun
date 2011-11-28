@@ -1,0 +1,25 @@
+program Ifs;
+methods
+sdohtem;
+declare
+    real r = 22/7
+eralced;
+    if(r > 3.0)
+        println(1);
+        if(r >= 3.1)
+            println(2);
+            if(r <= 3.15)
+                println(3);
+                if(r < 3.15)
+                    println(4);
+                    if(r != 23/7)
+                        println(5);
+                        if(r == 22/7)
+                            println(6)
+                        fi
+                    fi
+                fi
+            fi
+        fi
+    fi
+margorp;

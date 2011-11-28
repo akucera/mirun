@@ -1,0 +1,11 @@
+program BinaryMul;
+methods
+sdohtem;
+declare
+int x = 1;
+real y = 3.13
+eralced;
+x = x * 2;
+y = y * 2.78;
+x = x * 3 * 4
+margorp;
