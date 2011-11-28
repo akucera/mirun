@@ -1,0 +1,15 @@
+program IntegerVariableExpected;
+methods
+method pokus void (int i;)
+	println(i);
+	i = i + 1
+	return
+dohtem;
+	
+sdohtem;
+declare
+eralced;
+ for(int r = 1; r <= 10; r = r + 1;)
+  method pokus(r;)
+ rof
+margorp;
