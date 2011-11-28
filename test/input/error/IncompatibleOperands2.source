@@ -1,0 +1,8 @@
+program IncompatibleOperands2;
+methods
+sdohtem;
+declare
+int i = 42
+eralced;
+i = i * 3.3
+margorp;

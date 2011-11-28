@@ -1,0 +1,12 @@
+program MethodReal;
+methods
+ method double real(real i;)
+  return i
+ dohtem
+sdohtem;
+declare
+ real i = 0.0
+eralced;
+ i = method double(10.0;);
+ println(i)
+margorp;

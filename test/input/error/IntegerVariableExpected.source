@@ -1,0 +1,9 @@
+program IntegerVariableExpected;
+methods
+sdohtem;
+declare
+eralced;
+ for(real r = 1; r <= 10; r = r + 1;)
+  println(r)
+ rof
+margorp;

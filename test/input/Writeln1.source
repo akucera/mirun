@@ -1,0 +1,8 @@
+program Writeln1;
+methods
+sdohtem;
+declare
+real i = 1.23
+eralced;
+println(i)
+margorp;

@@ -1,0 +1,9 @@
+program For1;
+methods
+sdohtem;
+declare
+eralced;
+for(int i = 1; i <=10; i= i +1;)
+println(i)
+rof
+margorp;

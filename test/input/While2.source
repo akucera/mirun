@@ -1,0 +1,15 @@
+program While2;
+methods
+sdohtem;
+declare
+ int n = 10;
+ int m = 100;
+ int k = 0
+eralced;
+ k = m;
+ while(m>n)
+  println(k);
+  k = m - n;
+  n = n + 10
+ elihw
+margorp;
