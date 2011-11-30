@@ -13,3 +13,46 @@ eralced;
   method pokus(r;)
  rof
 margorp;
+
+
+
+
+
+program IntegerVariableExpected;
+methods
+method void pokus(int i;) {
+	println(i);
+	i = i + 1;
+	return;
+}
+	
+sdohtem;
+declare
+eralced;
+ for(int r = 1; r <= 10; r = r + 1;) {
+  method pokus(r;)
+ }
+margorp;
+
+
+
+
+
+
+
+program IntegerVariableExpected;
+methods
+method void pokus(int i;) {
+	println(i);
+	i = i + 1;
+	return;
+}
+	
+sdohtem;
+declare
+eralced;
+ for(int r = 1; r <= 10; r = r + 1;) {
+  println(r);
+ }
+margorp;
+

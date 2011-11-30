@@ -1,0 +1,200 @@
+program IntegerVariableExpected;
+methods
+method pokus void (int i;)
+	println(i);
+	i = i + 1
+	return
+dohtem;
+	
+sdohtem;
+declare
+eralced;
+ for(int r = 1; r <= 10; r = r + 1;)
+  method pokus(r;)
+ rof
+margorp;
+
+
+
+
+
+program IntegerVariableExpected;
+methods
+method void pokus(int i;) {
+	println(i);
+	i = i + 1;
+	return;
+}
+	
+sdohtem;
+declare
+eralced;
+ for(int r = 1; r <= 10; r = r + 1;) {
+  method pokus(r;)
+ }
+margorp;
+
+
+
+
+
+
+
+program IntegerVariableExpected;
+methods
+method void pokus(int i;) {
+	println(i);
+	i = i + 1;
+	array int pole 3;
+	[0]pole = 3;
+	[1]pole = 2;
+	[2]pole = 1;
+	return;
+}
+	
+sdohtem;
+declare
+eralced;
+ for(int r = 1; r < length(pole); r = r + 1;) {
+  println([r]pole);
+ }
+margorp;
+
+
+
+
+
+
+
+
+program IntegerVariableExpected;
+methods
+method void pokus(int i;) {
+	println(i);
+	i = i + 1;
+	array int pole 3;
+	readfile("vstupnisoubor.txt"; pole);
+	string outfile = "vystupnisoubor.txt";
+	writefile(pole; outfile);
+	[0]pole = 3;
+	[1]pole = 2;
+	[2]pole = 1;
+	return;
+}
+	
+sdohtem;
+declare
+eralced;
+ for(int r = 1; r < length(pole); r = r + 1;) {
+  println([r]pole);
+ }
+margorp;
+
+
+
+program IntegerVariableExpected;
+methods
+method void pokus(int i;) {
+	println(i);
+	i = i + 1;
+	array int pole 3;
+	readfile("vstupnisoubor.txt"; pole);
+	string outfile = "vystupnisoubor.txt";
+	writefile(pole; outfile);
+	[0]pole = 3;
+	[1]pole = 2;
+	[2]pole = 1;
+	return;
+}
+	
+sdohtem;
+declare
+eralced;
+ for(int r = 0; r < length(pole); r = r + 1;) {
+ 	for(int s = 0; s < length(pole); s = s + 1;) {
+  		println([r]pole);
+  	}
+ }
+margorp;
+
+
+
+
+
+
+
+
+
+
+
+
+program IntegerVariableExpected;
+methods
+method void pokus(int i;) {
+	println(i);
+	i = i + 1;
+	array int pole 3;
+	readfile("vstupnisoubor.txt"; pole);
+	string outfile = "vystupnisoubor.txt";
+	writefile(pole; outfile);
+	[0]pole = 3;
+	[1]pole = 2;
+	[2]pole = 1;
+	return;
+}
+	
+sdohtem;
+declare
+eralced;
+ for(int r = 0; r < length(pole); r = r + 1;) {
+ 	for(int s = 0; s < length(pole); s = s + 1;) {
+  		println([r]pole);
+  	}
+ }
+margorp;
+
+
+
+
+
+
+
+
+
+
+STRING		:	QUOTE ('a'..'z'|'A'..'Z'|'0'..'9'|'.'|'-'|'_'|' ')* QUOTE;
+
+
+
+
+program TestovaciKod;
+methods
+method void pokus(int i;) {
+	println(i);
+	i = i + 1;
+	array int pole 3;
+	readfile("vstupnisoubor.txt"; pole);
+	string outfile = "vystupnisoubor.txt";
+	writefile(pole; outfile);
+	[0]pole = 3;
+	[1]pole = 2;
+	[2]pole = 1;
+	return;
+}
+	
+sdohtem;
+declare
+eralced;
+ for(int r = 0; r < length(pole); r = r + 1;) {
+ 	for(int s = 0; s < length(pole); s = s + 1;) {
+  		println([r]pole);
+  	}
+ }
+
+while(i < 10) {
+   if(a == 1) {
+      println("A je 1");
+   }
+}
+
+margorp;
