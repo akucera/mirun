@@ -1,0 +1,72 @@
+program Knapsack;
+
+methods
+
+method void bruteBag(int pos; int maxWeightLeft; int cost;) {
+		
+		if (maxWeightLeft < 0){
+            return;
+            }
+        if (cost > bestCost){
+            bestCost = cost;
+            for(int i = 0; i < itemsCount; i = i + 1;){
+            	[i]best = [i]actual;
+            }
+        }
+        if (pos < 0){
+            return;
+        }
+        
+        [pos]actual = 1;
+        pos = pos - 1;
+        maxWeightLeft = maxWeightLeft - [pos]itemsWeight;
+        cost = cost + [pos]itemsCost;
+        call bruteBag(pos; maxWeightLeft; cost;)               
+        [pos]actual = 0;
+        pos = pos - 1;        
+        call bruteBag(pos; maxWeightLeft; cost;)        
+	
+};	
+sdohtem;
+
+declare
+eralced;
+
+int itemsCount = 4;
+int maxWeight = 100;
+
+array int itemsWeight 4;
+array int itemsCost 4;
+
+array int best 4;
+array int actual 4;
+
+int bestCost = 0;
+
+string inputfile = "01knap_itemsCount4_maxWeight100.dat";
+array int inputdata 50;	
+string outputfile = "output_" + inputfile;
+string output = " ";
+    
+	readfile(inputfile; inputdata);
+	
+	for (int i = 0; i < length(inputdata); i = i + 1;){
+	
+	  for (int i = 0; i < itemsCount; i = i + 1;) {
+                [i]itemsWeight = [i]inputdata;
+                [i]itemsCost = [i+1]inputdata;
+      } 
+	  
+	  for (int i = 0; i < itemsCount; i = i + 1;) {
+       [i]best = 0;
+       [i]actual = 0;    
+       }	  
+	  
+	  itemsCount = itemsCount - 1;
+	  call bruteBag(itemsCount; maxWeight; 0;)
+	  output = bestCost + "  " + [0]best + "  " + [1]best + "  "  + [2]best + "  "  + [3]best + "newLine";	  
+	 }	 
+	
+	writefile(output; outputfile);
+
+margorp;

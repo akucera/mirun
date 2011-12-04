@@ -1,0 +1,74 @@
+program Knapsack;
+
+methods
+
+method void run(string filename) {	
+  array int inputdata 100;	
+  readfile(filename; inputdata);
+	
+  while(1==1){
+    call init()
+    call bruteBagRecursive()
+  }
+	 
+  string outputfile = "output_" + filename;
+  writefile(POLE; outputfile);	
+};
+
+method void init() {	
+  readfile("knap_4.inst.dat"; pole);
+};
+
+method void bruteBagRecursive() {
+  itemsCount = itemsCount - 1;
+  call bruteBag(itemsCount; maxWeight; 0)
+  string output = id + " " + itemsCount + " " + bestCost + "  " + [0]best + "  " + [1]best + "  "  + [2]best + "  "  + [3]best + "\n";
+	
+  println(output);
+};
+
+method void bruteBag(int pos; int maxWeightLeft; int cost) {
+  if (maxWeightLeft < 0){
+    return;
+  }
+
+  if (cost > bestCost) {
+    bestCost = cost;
+    for(int i = 0; i < itemsCount; i = i + 1;){
+      [i]best = [i]actual;
+    }
+  }
+  
+  if (pos < 0){
+    return;
+  }
+        
+  [pos]actual = 1;
+  pos = pos - 1;
+  maxWeightLeft = maxWeightLeft - [pos]itemsWeight;
+  cost = cost + [pos]itemsCost;
+  call bruteBag(pos; maxWeightLeft; cost;)               
+  [pos]actual = 0;
+  pos = pos - 1;        
+  call bruteBag(pos; maxWeightLeft; cost);   
+};	
+
+sdohtem;
+
+declare
+
+array int itemsWeight 100;
+array int itemsCost 100;
+int id = 0;
+int itemsCount = 4;
+array int best 100;
+array int actual 100;
+int maxWeight = 0;
+int bestCost = 0;
+string inputfile = "knap_4.inst.dat";
+
+eralced;
+
+call run(inputfile);
+
+margorp;
