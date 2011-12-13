@@ -53,21 +53,22 @@ varType			:	INTVAR | REALVAR | STRINGVAR;
 //konec cast deklarace promennych	
 //cast telo programu
 bodyList 		:	available bodyListRest
+			|	returnBlock
 			|	;
 
 available		:	ifBlock
 			|	whileBlock
-						|	methodCall
-						|	staticMethod
+			|	methodCall
+			|	staticMethod
 			|	forBlock
-						|	arrAssignment
+			|	arrAssignment
 			|	assignment
 			|	varDeclaration
-						|	arrayDeclaration
-						|	returnBlock;
+			|	arrayDeclaration;
 
 bodyListRest		:	available bodyListRest
-			|	;
+			|	returnBlock
+			| ;
 //konec cast telo programu
 //cast bloky prikazu
 ifBlock			:	IF condition LBRACE bodyList RBRACE;
@@ -170,10 +171,6 @@ FOR		:	'for';
 RETURN		:	'return';
 ENDDECLARATION	:	'eralced';
 ENDMETHODS	:	'sdohtem';
-ENDMETHOD	:	'dohtem';
-ENDWHILE	:	'elihw';
-ENDIF		:	'fi';
-ENDFOR		:	'rof';
 CALL		:	'call';
 SEMICOLON	:	';';
 
