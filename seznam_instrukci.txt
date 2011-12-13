@@ -1,0 +1,71 @@
+pushc [cislo]
+	- vlozit konstantu (hodnotu) na zasobnik
+
+pushv [adresa-cislo]
+	- vlozit promennou (adresu) na zasobnik
+	- podiva se na tabulku promennych a hodnotu vlozi na zasobnik
+
+pop [adresa]
+	- vyjmuti ze zasobniku a ulozeni na adresu slotu
+	- vezme hodnotu z vrcholu zasobniku a ulozi ji na adresu
+
+arrdef [adresa pole]
+	- na zasobniku je pocet polozek
+	- po provedeni je pole na teto adrese
+
+arrpop [adresa pole]
+	- vlozi hodnotu do pole na adrese
+	- nejvyssi hodnota zas = index v poli
+	- 2. nejvyssi hodnota zas = hodnota
+
+arrpush [adresa pole]
+	- z pole na adrese vlozi hodnotu na vrchol zasobniku
+	- nejvyssi hodnota zas = index v poli
+	-> vlozi hodnotu na zasobniku
+
+badd
+	- scitani (addition)
+	- nacte 2 nejvyssi hodnoty ze zasobniku, secte a vysledek vlozi na zasobnik
+	
+bsub
+	- odcitani (substraction)
+	- nacte 2 nejvyssi hodnoty ze zasobniku, odecte a vysledek vlozi na zasobnik
+
+bmul - nasobeni (multiplication)
+	- nacte 2 nejvyssi hodnoty ze zasobniku, vynasobi a vysledek vlozi na zasobnik
+
+lab1: (aa:, fff4:, ...)
+	- navesti (identifikator a dvojtecka)
+
+mjmp [navesti]
+	- skoci na navesti metody
+	- vytvori kopii environmentu, vlozi do stacku enviromentu a nastavi callstack
+
+mret
+	- ukonceni metody
+	- po zavolani se vraci dle callstacku na pozici callstack+1
+
+jmp [navesti]
+	- nepodmineny skok
+
+jeq [navesti]
+	- podmineny skok
+	- skace, kdyz 2 nejvyssi hodnoty na zasobniku jsou stejne
+
+jneq [navesti]
+	- skok, dyz nejsou stejne
+
+jlt [navesti]
+	- skok, kdyz nejvyssi hodnota na zasobniku je mensi nez 2 nejvyssi
+
+jgt [navesti]
+	- skok, kdyz nejvyssi hodnota na zasobniku je vetsi nez 2 nejvyssi
+
+jelt [navesti]
+	- mensi nebo rovno
+
+jegt
+	- vetsi nebo rovno
+	
+call [adresa v method table]
+	- volani staticke metody (metoda interpretru) na adrese v tabulce metod
