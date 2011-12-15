@@ -26,7 +26,7 @@ methodCallParams	:	vyraz methodCallParamsRest
 methodCallParamsRest	:	SEMICOLON methodCallParams
 			|	;
 
-returnType		:	INTVAR | REALVAR | STRINGVAR | ARRAYVAR | VOID;
+returnType		:	INTVAR | STRINGVAR | ARRAYVAR | VOID;
 
 params			:	varType ID paramsRest
 			|	;
@@ -49,7 +49,7 @@ arrayDeclaration	:	ARRAYVAR varType ID INT SEMICOLON;
 varDeclaration		:	varType ID ASSIGN vyraz SEMICOLON;
 
 
-varType			:	INTVAR | REALVAR | STRINGVAR;
+varType			:	INTVAR | STRINGVAR;
 //konec cast deklarace promennych	
 //cast telo programu
 bodyList 		:	available bodyListRest
@@ -109,8 +109,8 @@ staticMethod		:	print
 						|	wtf;
 print			:	PRINTLN LPAR vyraz RPAR SEMICOLON;
 length			:	LENGTH LPAR ID RPAR;
-rofl			:	ROFL LPAR stringId SEMICOLON ID RPAR SEMICOLON;
-wtf			:	WTF LPAR ID SEMICOLON stringId RPAR SEMICOLON;
+rofl			:	ROFL LPAR STRING SEMICOLON ID RPAR SEMICOLON;
+wtf			:	WTF LPAR ID SEMICOLON STRING RPAR SEMICOLON;
 
 compareOperator :	EQ | NE | GT | LT | LE | GE ;
 //konec cast pomocna pravidla
@@ -133,11 +133,10 @@ clen2	:	TIMES faktor clen2
 faktor		:	LPAR vyraz RPAR 
 		|	konst	
 		|	ID;
-stringId	:	(STRING | ID);
-konst		:	INT | REAL | STRING;
+
+konst		:	INT | STRING;
 
 arrayObjType	:	INT
-			REAL
 			STRING;
 //konec vyraz
 
@@ -149,13 +148,11 @@ arrayObjType	:	INT
 PROG		:	'program';
 ENDPROG		:	'margorp';
 INTVAR		:	'int';
-REALVAR		:	'real';
 VOID		:	'void';
 STRINGVAR	:	'string';
 ARRAYVAR	:	'array';
 
 INT		:	'0'..'9'+;
-REAL		:	'0'..'9'+ DOT '0'..'9'*;
 STRING		:	QUOTE ('a'..'z'|'A'..'Z'|'0'..'9'|'.'|'-'|'_'|' '|'\\')* QUOTE;
 // efinice stringu, podporuje a-z, A-Z, 0-9, tecku, pomlcku, podrtzitko
 // string musi byt v uvozovkach ... co stringPromenne? :-/

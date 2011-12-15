@@ -13,8 +13,7 @@ import java.util.List;
 public class MethodDeclarationTree extends Tree {
 
     public enum ReturnType {
-
-        INTVAR, REALVAR, VOID
+        INTVAR, REALVAR, VOID, STRINGVAR, ARRAYVAR
     }
     private String name;
     private SymTab symTab;
@@ -69,9 +68,6 @@ public class MethodDeclarationTree extends Tree {
             switch (t) {
                 case INTVAR:
                     ctx.print("I");
-                    break;
-                case REALVAR:
-                    ctx.print("D");
                     break;
             }
         }

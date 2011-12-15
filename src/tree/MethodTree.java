@@ -65,9 +65,6 @@ public class MethodTree extends AvailableTree {
                 case INTVAR:
                     ctx.print("I");
                     break;
-                case REALVAR:
-                    ctx.print("D");
-                    break;
             }
         }
         ctx.print(")");

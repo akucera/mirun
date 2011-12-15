@@ -61,9 +61,6 @@ public class AssignmentTree extends AvailableTree {
                 case INTVAR:
                     expression.setType(Type.INTVAR);
                     break;
-                case REALVAR:
-                    expression.setType(Type.REALVAR);
-                    break;
             }
             expression.generate(ctx);
         }
@@ -71,8 +68,6 @@ public class AssignmentTree extends AvailableTree {
             case INTVAR:
                 ctx.print("i");
                 break;
-            case REALVAR:
-                ctx.print("d");
         }
         ctx.println("store " + identifier.getSlot());
     }

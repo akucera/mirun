@@ -14,7 +14,7 @@ public class LiteralTree extends ExpressionTree {
 
     private Type type;
     /**
-     * Value je instance java.lang.Integer nebo java.lang.Double.
+     * Value je instance java.lang.Integer nebo String
      */
     private Object value;
 
@@ -51,10 +51,8 @@ public class LiteralTree extends ExpressionTree {
             case INTVAR:
                 ctx.println("ldc " + value);
                 break;
-            case REALVAR: {
-                Double d = (Double) value;
-                ctx.printf("ldc2_w %.2f%n", d.doubleValue());
-            }
+            case STRINGVAR:
+            	break;
         }
     }
 

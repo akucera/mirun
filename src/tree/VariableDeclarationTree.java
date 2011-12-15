@@ -9,7 +9,7 @@ package tree;
  *
  * @author aka
  */
-public class VariableDeclarationTree extends Tree{
+public class VariableDeclarationTree extends DeclarationTree {
 
     private AssignmentTree a;
     /*

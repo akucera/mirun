@@ -10,7 +10,7 @@ package tree;
  */
 public class ForTree extends AvailableTree {
 
-    private VariableDeclarationTree identifier;
+    private DeclarationTree identifier;
     private BinaryTree condition;
     private AssignmentTree step;
     private BodyListTree body;
@@ -20,7 +20,7 @@ public class ForTree extends AvailableTree {
      */
     private int tempVar;
 
-    public ForTree(Position start, Position end, VariableDeclarationTree identifier,
+    public ForTree(Position start, Position end, DeclarationTree identifier,
             BinaryTree condition, AssignmentTree step, BodyListTree body) {
         super(start, end);
         this.identifier = identifier;
@@ -29,7 +29,7 @@ public class ForTree extends AvailableTree {
         this.body = body;
     }
 
-    public VariableDeclarationTree getIdentifier() {
+    public DeclarationTree getIdentifier() {
         return this.identifier;
     }
 

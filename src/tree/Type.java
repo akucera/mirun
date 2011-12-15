@@ -11,7 +11,8 @@ package tree;
 public enum Type {
 
     INTVAR(1),
-    REALVAR(2);
+    STRINGVAR(3),
+    ARRAYVAR(4);
     private int size;
 
     private Type(int size) {

@@ -38,8 +38,6 @@ public class PrintTree extends AvailableTree {
             case INTVAR:
                 ctx.println("invokevirtual java/io/PrintStream/println(I)V");
                 break;
-            case REALVAR:
-                ctx.println("invokevirtual java/io/PrintStream/println(D)V");
         }
     }
 

@@ -45,7 +45,7 @@ public class Lexer {
      */
     private StringBuilder word = new StringBuilder();
     /**
-     * Atribut lexikalnich symbolu INT_CONST, REAL_CONST.
+     * Atribut lexikalnich symbolu INT_CONST, REAL_CONST, STRING_CONST.
      */
     private Object value;
 
@@ -142,14 +142,6 @@ public class Lexer {
                 word.append((char) ch);
                 ch = nextChar();
             } while (Character.isDigit(ch));
-            if (ch == '.') {
-                do {
-                    word.append((char) ch);
-                    ch = nextChar();
-                } while (Character.isDigit(ch));
-                value = Double.valueOf(word.toString());
-                return REAL;
-            }
             try {
                 value = Integer.valueOf(word.toString());
                 return INT;
@@ -158,6 +150,20 @@ public class Lexer {
                 throw new LexerException();
             }
         }
+        if (ch == '"') {
+        	ch = nextChar();
+        	while (ch != '"') {
+        		if (!Character.isLetter(ch) || !Character.isDigit(ch) || !Character.isWhitespace(ch) ||
+        				(ch != '.') || (ch != '-') || (ch != '_')) {
+        			error("invalid character in string : %c", ch);
+        			throw new LexerException();
+        		}
+        		word.append(ch);
+        		ch = nextChar();
+        	}
+        	value = word.toString();
+        	return STRING;
+        }
         if (ch == '(') {
             ch = nextChar();
             return LPAR;
@@ -165,6 +171,26 @@ public class Lexer {
         if (ch == ')') {
             ch = nextChar();
             return RPAR;
+        }
+        if (ch == '{') {
+        	ch = nextChar();
+        	return LBRACE;
+        }
+        if (ch == '}') {
+        	ch = nextChar();
+        	return RBRACE;
+        }
+        if (ch == '[') {
+        	ch = nextChar();
+        	return LBRACKET;
+        }
+        if (ch == ']') {
+        	ch = nextChar();
+        	return RBRACKET;
+        }
+        if (ch == ':') {
+        	ch = nextChar();
+        	return COLON;
         }
         if (ch == ';') {
             ch = nextChar();

@@ -69,8 +69,6 @@ public class IdentifierTree extends ExpressionTree {
             case INTVAR:
                 ctx.print("i");
                 break;
-            case REALVAR:
-                ctx.print("d");
         }
         ctx.println("load " + variable.getSlot());
     }

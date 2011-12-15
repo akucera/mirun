@@ -13,14 +13,14 @@ import java.util.List;
  */
 public class VariableDeclarationsTree extends Tree{
 
-    private List<VariableDeclarationTree> declarations;
+    private List<DeclarationTree> declarations;
 
-    public VariableDeclarationsTree(Position start, Position end, List<VariableDeclarationTree> declarations){
+    public VariableDeclarationsTree(Position start, Position end, List<DeclarationTree> declarations){
         super(start, end);
         this.declarations = declarations;
     }
 
-    public List<VariableDeclarationTree> getDeclarations(){
+    public List<DeclarationTree> getDeclarations(){
         return this.declarations;
     }
 
@@ -31,7 +31,7 @@ public class VariableDeclarationsTree extends Tree{
 
     @Override
     public void generate(Context ctx) {
-        for (VariableDeclarationTree t : declarations) {
+        for (DeclarationTree t : declarations) {
             t.generate(ctx);
         }
     }

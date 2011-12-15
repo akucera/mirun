@@ -104,122 +104,122 @@ public class SemanticAnalyzer implements TreeVisitor {
     }
 
     public void visitMethod(MethodDeclarationTree t) {
-        BodyListTree body = t.getBody();
-        body.accept(this);
-        ExpressionTree retTree = t.getRetTree();
-        if (retTree != null) {
-            retTree.accept(this);
-            ReturnType retType = t.getReturnType();
-            switch (retType) {
-                case INTVAR:
-                    if (retTree == null) {
-                        error(t, "null return in INT method!");
-                    }
-                    if (retTree.getType() != Type.INTVAR) {
-                        error(t, "wrong return tree type, INT required!");
-                    }
-                    push(Type.INTVAR);
-                    break;
-                case REALVAR:
-                    if (retTree == null) {
-                        error(t, "null return in REAL method!");
-                    }
-                    if (retTree.getType() != Type.REALVAR) {
-                        error(t, "wrong return tree type, REAL required!");
-                    }
-                    push(Type.REALVAR);
-                    break;
-                case VOID:
-                    if (retTree != null) {
-                        error(t, "not null return in VOID method!");
-                    }
-                    break;
-            }
-        }
-        t.setStackDepth(maxDepth);
-        nullStack();
+//        BodyListTree body = t.getBody();
+//        body.accept(this);
+//        ExpressionTree retTree = t.getRetTree();
+//        if (retTree != null) {
+//            retTree.accept(this);
+//            ReturnType retType = t.getReturnType();
+//            switch (retType) {
+//                case INTVAR:
+//                    if (retTree == null) {
+//                        error(t, "null return in INT method!");
+//                    }
+//                    if (retTree.getType() != Type.INTVAR) {
+//                        error(t, "wrong return tree type, INT required!");
+//                    }
+//                    push(Type.INTVAR);
+//                    break;
+//                case REALVAR:
+//                    if (retTree == null) {
+//                        error(t, "null return in REAL method!");
+//                    }
+//                    if (retTree.getType() != Type.REALVAR) {
+//                        error(t, "wrong return tree type, REAL required!");
+//                    }
+//                    push(Type.REALVAR);
+//                    break;
+//                case VOID:
+//                    if (retTree != null) {
+//                        error(t, "not null return in VOID method!");
+//                    }
+//                    break;
+//            }
+//        }
+//        t.setStackDepth(maxDepth);
+//        nullStack();
     }
 
     public void visitAssignment(AssignmentTree t) {
-        IdentifierTree i = t.getIdentifier();
-        i.accept(this);
-        if (t.getLeftMethod()) {
-            MethodTree m = t.getMethod();
-            m.accept(this);
-        } else {
-            ExpressionTree e = t.getExpression();
-            e.accept(this);
-            if (i.getType() == Type.REALVAR) {
-                if (e.getType() == Type.INTVAR && e.getOperator() == Operator.IDIV) {
-                    pop(i.getType());
-                    return;
-                }
-            }
-            if (i.getType() != e.getType()) {
-                error(e, "cannot assign " + e.getType() + " to " + i.getType());
-            }
-            pop(i.getType());
-        }
+//        IdentifierTree i = t.getIdentifier();
+//        i.accept(this);
+//        if (t.getLeftMethod()) {
+//            MethodTree m = t.getMethod();
+//            m.accept(this);
+//        } else {
+//            ExpressionTree e = t.getExpression();
+//            e.accept(this);
+//            if (i.getType() == Type.REALVAR) {
+//                if (e.getType() == Type.INTVAR && e.getOperator() == Operator.IDIV) {
+//                    pop(i.getType());
+//                    return;
+//                }
+//            }
+//            if (i.getType() != e.getType()) {
+//                error(e, "cannot assign " + e.getType() + " to " + i.getType());
+//            }
+//            pop(i.getType());
+//        }
 
     }
 
     public void visitBinary(BinaryTree t) {
-        ExpressionTree e1 = t.getLeftOperand();
-
-        Type t1 = e1.getType();
-        ExpressionTree e2 = t.getRightOperand();
-
-        Type t2 = e2.getType();
-        if (t1 == Type.REALVAR) {
-            if (t2 == Type.INTVAR && e2.getOperator() == Operator.IDIV) {
-                push(Type.REALVAR);
-                push(Type.REALVAR);
-                pop(t2);
-                pop(t2);
-                t2 = Type.REALVAR;
-            }
-        }
-        e1.accept(this);
-        e2.accept(this);
-        if (t.getOperator() == Operator.DDIV && t1 == Type.INTVAR) {
-            // i2d
-            pop(Type.INTVAR);
-            push(Type.REALVAR);
-            t1 = Type.REALVAR;
-        }
-        if (t.getOperator() == Operator.DDIV && t2 == Type.REALVAR) {
-            // i2d
-            pop(Type.INTVAR);
-            push(Type.REALVAR);
-        }
-        if (t1 != t2) {
-            error(t, "operands must be of the same type");
-        }
-        pop(t1);
-        pop(t2);
-        switch (t.getOperator()) {
-            case ADD:
-            case SUB:
-            case MUL:
-                if (t1 == Type.INTVAR) {
-                    push(Type.INTVAR);
-                } else {
-                    push(Type.REALVAR);
-                }
-                break;
-            case DDIV:
-                push(Type.REALVAR);
-                break;
-            case IDIV:
-                push(Type.INTVAR);
-                break;
-            case EQ:
-            case NE:
-            case LT:
-            case GT:
-            case LE:
-            case GE:
-        }
+//        ExpressionTree e1 = t.getLeftOperand();
+//
+//        Type t1 = e1.getType();
+//        ExpressionTree e2 = t.getRightOperand();
+//
+//        Type t2 = e2.getType();
+//        if (t1 == Type.REALVAR) {
+//            if (t2 == Type.INTVAR && e2.getOperator() == Operator.IDIV) {
+//                push(Type.REALVAR);
+//                push(Type.REALVAR);
+//                pop(t2);
+//                pop(t2);
+//                t2 = Type.REALVAR;
+//            }
+//        }
+//        e1.accept(this);
+//        e2.accept(this);
+//        if (t.getOperator() == Operator.DDIV && t1 == Type.INTVAR) {
+//            // i2d
+//            pop(Type.INTVAR);
+//            push(Type.REALVAR);
+//            t1 = Type.REALVAR;
+//        }
+//        if (t.getOperator() == Operator.DDIV && t2 == Type.REALVAR) {
+//            // i2d
+//            pop(Type.INTVAR);
+//            push(Type.REALVAR);
+//        }
+//        if (t1 != t2) {
+//            error(t, "operands must be of the same type");
+//        }
+//        pop(t1);
+//        pop(t2);
+//        switch (t.getOperator()) {
+//            case ADD:
+//            case SUB:
+//            case MUL:
+//                if (t1 == Type.INTVAR) {
+//                    push(Type.INTVAR);
+//                } else {
+//                    push(Type.REALVAR);
+//                }
+//                break;
+//            case DDIV:
+//                push(Type.REALVAR);
+//                break;
+//            case IDIV:
+//                push(Type.INTVAR);
+//                break;
+//            case EQ:
+//            case NE:
+//            case LT:
+//            case GT:
+//            case LE:
+//            case GE:
+//        }
     }
 
     public void visitIdentifier(IdentifierTree t) {
@@ -236,32 +236,32 @@ public class SemanticAnalyzer implements TreeVisitor {
     }
 
     public void visitFor(ForTree t) {
-        VariableDeclarationTree i = t.getIdentifier();
-        Type type;
-        i.accept(this);
-        if ((i.getType() == Type.INTVAR)) {
-            type = Type.INTVAR;
-        } else {
-            type = Type.REALVAR;
-        }
-        BinaryTree b = t.getCondition();
-        b.accept(this);
-        if (b.getType() != type) {
-            error(b, type + " value expected");
-        }
-        AssignmentTree a = t.getStep();
-        a.accept(this);
-        IdentifierTree i2 = a.getIdentifier();
-        if (i2.getType() != type) {
-            error(i2, type + " value expected");
-        }
-        ExpressionTree e2 = a.getExpression();
-        if (e2.getType() != type) {
-            error(e2, type + " value expected");
-        }
-
-        BodyListTree body = t.getBody();
-        body.accept(this);
+//        VariableDeclarationTree i = t.getIdentifier();
+//        Type type;
+//        i.accept(this);
+//        if ((i.getType() == Type.INTVAR)) {
+//            type = Type.INTVAR;
+//        } else {
+//            type = Type.REALVAR;
+//        }
+//        BinaryTree b = t.getCondition();
+//        b.accept(this);
+//        if (b.getType() != type) {
+//            error(b, type + " value expected");
+//        }
+//        AssignmentTree a = t.getStep();
+//        a.accept(this);
+//        IdentifierTree i2 = a.getIdentifier();
+//        if (i2.getType() != type) {
+//            error(i2, type + " value expected");
+//        }
+//        ExpressionTree e2 = a.getExpression();
+//        if (e2.getType() != type) {
+//            error(e2, type + " value expected");
+//        }
+//
+//        BodyListTree body = t.getBody();
+//        body.accept(this);
     }
 
     public void visitIf(IfTree t) {
@@ -287,10 +287,10 @@ public class SemanticAnalyzer implements TreeVisitor {
     }
 
     public void visitDeclarations(VariableDeclarationsTree t) {
-        List<VariableDeclarationTree> declarations = t.getDeclarations();
-        for (VariableDeclarationTree declaration : declarations) {
-            declaration.accept(this);
-        }
+//        List<VariableDeclarationTree> declarations = t.getDeclarations();
+//        for (VariableDeclarationTree declaration : declarations) {
+//            declaration.accept(this);
+//        }
     }
 
     public void visitDeclaration(VariableDeclarationTree t) {
@@ -306,32 +306,32 @@ public class SemanticAnalyzer implements TreeVisitor {
     }
 
     public void visitMethodBlock(MethodTree t) {
-        push(Type.INTVAR);
-        boolean isRight = t.getIsRight();
-        ReturnType retType = t.getReturnType();
-        List<ExpressionTree> params = t.getParams();
-        for (ExpressionTree e : params) {
-            e.accept(this);
-        }
-        switch (retType) {
-            case INTVAR:
-                if (!isRight) {
-                    error(t, "nonVOID method must be assigned!");
-                }
-                push(Type.INTVAR);
-                break;
-            case REALVAR:
-                if (!isRight) {
-                    error(t, "nonVOID method must be assigned!");
-                }
-                push(Type.REALVAR);
-                break;
-            case VOID:
-                if (isRight) {
-                    error(t, "VOID method can't be assigned!");
-                }
-                break;
-        }
-        pop(Type.INTVAR);
+//        push(Type.INTVAR);
+//        boolean isRight = t.getIsRight();
+//        ReturnType retType = t.getReturnType();
+//        List<ExpressionTree> params = t.getParams();
+//        for (ExpressionTree e : params) {
+//            e.accept(this);
+//        }
+//        switch (retType) {
+//            case INTVAR:
+//                if (!isRight) {
+//                    error(t, "nonVOID method must be assigned!");
+//                }
+//                push(Type.INTVAR);
+//                break;
+//            case REALVAR:
+//                if (!isRight) {
+//                    error(t, "nonVOID method must be assigned!");
+//                }
+//                push(Type.REALVAR);
+//                break;
+//            case VOID:
+//                if (isRight) {
+//                    error(t, "VOID method can't be assigned!");
+//                }
+//                break;
+//        }
+//        pop(Type.INTVAR);
     }
 }
