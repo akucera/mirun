@@ -80,7 +80,9 @@ public class Bytecode {
 		return new Integer(nextInt());
 	}
 	
-	public void jumpTo(int newPosition) {
+	public void jumpTo(int newPosition) throws BytecodeOverflowException {
+		if(newPosition >= size()) throw new BytecodeOverflowException("Bytecode overflow - code tried to jump after end of bytes array");
+		
 		this.position = newPosition;
 	}
 	

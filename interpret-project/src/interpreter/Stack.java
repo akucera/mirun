@@ -8,13 +8,11 @@ public class Stack {
 	private int itemsCount;
 	
 	private int position;
-	private int maxSize;
 	private Object[] arr;
 	
 	public Stack(int maxSize) {
 		this.itemsCount = 0;
 		this.position = 0;
-		this.maxSize = maxSize;
 		this.arr = new Object[maxSize];
 	}
 	
@@ -25,6 +23,11 @@ public class Stack {
 		arr[position+1] = null;
 		
 		return o;
+	}
+	
+	public Object top() throws EmptyStackPopException {
+		if(position == 0) throw new EmptyStackPopException("Trying to look to top of empty stack");
+		return arr[position-1];
 	}
 	
 	public void push(Object o) throws StackOverflowException {

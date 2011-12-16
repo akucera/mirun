@@ -48,6 +48,7 @@ import exception.VariableNotFoundException;
  *  bmul - nasobeni (multiplication)
  *  	- nacte 2 nejvyssi hodnoty ze zasobniku, vynasobi a vysledek vlozi na zasobnik
  *  
+ *  v bytecode neni treba
  *  lab1: (aa:, fff4:, ...)
  *  	- navesti (identifikator a dvojtecka)
  *  
@@ -182,20 +183,21 @@ public class Interpreter {
 	 * 
 	 * @param b
 	 * @throws InvalidInstructionException
-	 * @throws VariableNotFoundException 
+	 * @throws VariableNotFoundException
 	 */
 	private void processByte(byte b) throws InvalidInstructionException,
-			BytecodeOverflowException, StackOverflowException, EmptyStackPopException, VariableNotFoundException {
+			BytecodeOverflowException, StackOverflowException,
+			EmptyStackPopException, VariableNotFoundException {
 
 		String str = "";
 
 		switch (b) {
-		
+
 		case POP_INSTR:
 			str = "POP_INSTR";
 			doPopInstruction();
 			break;
-		
+
 		case PUSHC_INSTR:
 			str = "PUSHC_INSTR";
 			doPushCInstruction();
@@ -205,7 +207,7 @@ public class Interpreter {
 			str = "PUSHV_INSTR";
 			doPushVInstruction();
 			break;
-			
+
 		case ARRDEF_INSTR:
 			str = "ARRDEF_INSTR";
 			break;
@@ -217,16 +219,19 @@ public class Interpreter {
 			break;
 		case BADD_INSTR:
 			str = "BADD_INSTR";
+			doBaddInstruction();
 			break;
 		case BSUB_INSTR:
 			str = "BSUB_INSTR";
+			doBsubInstruction();
 			break;
 		case BMUL_INSTR:
 			str = "BMUL_INSTR";
+			doBmulInstruction();
 			break;
-		case LAB_INSTR:
-			str = "LAB_INSTR";
-			break;
+		/*
+		 * case LAB_INSTR: str = "LAB_INSTR"; break;
+		 */
 		case MJMP_INSTR:
 			str = "MJMP_INSTR";
 			break;
@@ -235,23 +240,30 @@ public class Interpreter {
 			break;
 		case JMP_INSTR:
 			str = "JMP_INSTR";
+			doJmpInstruction();
 			break;
 		case JEQ_INSTR:
 			str = "JEQ_INSTR";
+			doJeqInstruction();
 			break;
 		case JNEQ_INSTR:
 			str = "JNEQ_INSTR";
+			doJneqInstruction();
 			break;
 		case JLT_INSTR:
+			doJltInstruction();
 			str = "JLT_INSTR";
 			break;
 		case JGT_INSTR:
+			doJgtInstruction();
 			str = "JGT_INSTR";
 			break;
 		case JELT_INSTR:
+			doJeltInstruction();
 			str = "JELT_INSTR";
 			break;
 		case JEGT_INSTR:
+			doJegtInstruction();
 			str = "JEGT_INSTR";
 			break;
 		case CALL_INSTR:
@@ -272,51 +284,209 @@ public class Interpreter {
 					"Unknown instruction called: 0x" + Util.toHexString(b));
 		}
 
-		Util.debugMsg("Instruction:\t0x" + Util.toHexString(b) + "\t"
-				+ str);
+		Util.debugMsg("Instruction:\t0x" + Util.toHexString(b) + "\t" + str);
 	}
 
 	/*
 	 * kazda instrukce ma vlastni metody, at je to prehlednejsi
 	 */
-	
+
 	/*
-	 * pop [adresa]
-	 *	- vyjmuti ze zasobniku a ulozeni na adresu slotu
-	 *	- vezme hodnotu z vrcholu zasobniku a ulozi ji na adresu
+	 * pop [adresa] - vyjmuti ze zasobniku a ulozeni na adresu slotu - vezme
+	 * hodnotu z vrcholu zasobniku a ulozi ji na adresu
 	 */
-	private void doPopInstruction() throws BytecodeOverflowException, EmptyStackPopException {
-		Integer adr = bc.nextInteger();
+	private void doPopInstruction() throws BytecodeOverflowException,
+			EmptyStackPopException {
+		Integer addr = bc.nextInteger();
 		Integer value = ((Integer) s.pop()).intValue();
-		
-		varTable.setVariable(adr, value);
-		
-		Util.debugMsg("  Poped " + value + ", setting to addres " + adr);
-	}
-	
-	/*
-	 *  pushc [cislo]
-	 *  	- vlozit konstantu (hodnotu) na zasobnik
-	 */
-	private void doPushCInstruction() throws BytecodeOverflowException, StackOverflowException {
-		Integer i = bc.nextInteger();
-		s.push(i);
-		
-		Util.debugMsg("  Pushing " + i);
-	}
-	
-	/*
-	 * pushv [adresa-cislo]
-	 * 	- vlozit promennou (adresu) na zasobnik
-	 * 	- podiva se na tabulku promennych a hodnotu vlozi na zasobnik
-	 */
-	private void doPushVInstruction() throws BytecodeOverflowException, VariableNotFoundException {
-		Integer adr = bc.nextInteger();
-		Object o = varTable.getValue(adr);
-		
-		Util.debugMsg("  Push value from address "+adr+" ("+o+") to stack");
+
+		varTable.setVariable(addr, value);
+
+		Util.debugMsg("  Poped " + value + ", setting to addres " + addr);
 	}
 
+	/*
+	 * pushc [cislo] - vlozit konstantu (hodnotu) na zasobnik
+	 */
+	private void doPushCInstruction() throws BytecodeOverflowException,
+			StackOverflowException {
+		Integer i = bc.nextInteger();
+		s.push(i);
+
+		Util.debugMsg("  Pushing " + i);
+	}
+
+	/*
+	 * pushv [adresa-cislo] - vlozit promennou (adresu) na zasobnik - podiva se
+	 * na tabulku promennych a hodnotu vlozi na zasobnik
+	 */
+	private void doPushVInstruction() throws BytecodeOverflowException,
+			VariableNotFoundException {
+		Integer adr = bc.nextInteger();
+		Object o = varTable.getValue(adr);
+
+		Util.debugMsg("  Push value from address " + adr + " (" + o
+				+ ") to stack");
+	}
+
+	/*
+	 * badd - scitani (addition) - nacte 2 nejvyssi hodnoty ze zasobniku, secte
+	 * a vysledek vlozi na zasobnik
+	 */
+	private void doBaddInstruction() throws EmptyStackPopException,
+			StackOverflowException {
+		Integer i1 = (Integer) s.pop();
+		Integer i2 = (Integer) s.pop();
+		s.push(new Integer(i1 + i2));
+
+		Util.debugMsg("   Add " + i2 + " + " + i1 + ", result on stack: "
+				+ (Integer) s.top());
+	}
+
+	/*
+	 * bsub - odcitani (substraction) - nacte 2 nejvyssi hodnoty ze zasobniku,
+	 * odecte a vysledek vlozi na zasobnik.
+	 * 
+	 * Nejvyssi cislo (prvni vracene) je odectene od cisla pod nim (drive
+	 * vlozeneho)
+	 */
+	private void doBsubInstruction() throws EmptyStackPopException,
+			StackOverflowException {
+		Integer i1 = (Integer) s.pop();
+		Integer i2 = (Integer) s.pop();
+		s.push(new Integer(i2 - i1));
+
+		Util.debugMsg("   Substract " + i2 + " - " + i1 + ", result on stack: "
+				+ (Integer) s.top());
+	}
+
+	/*
+	 * bmul - nasobeni (multiplication) - nacte 2 nejvyssi hodnoty ze zasobniku,
+	 * vynasobi a vysledek vlozi na zasobnik
+	 */
+	private void doBmulInstruction() throws EmptyStackPopException,
+			StackOverflowException {
+		Integer i1 = (Integer) s.pop();
+		Integer i2 = (Integer) s.pop();
+		s.push(new Integer(i1 * i2));
+
+		Util.debugMsg("   Multiply " + i2 + " * " + i1 + ", result on stack: "
+				+ s.top());
+	}
+
+	/*
+	 * jmp [navesti] - nepodmineny skok
+	 */
+	private void doJmpInstruction() throws BytecodeOverflowException {
+		Integer addr = bc.nextInteger();
+		bc.jumpTo(addr);
+		
+		Util.debugMsg("   Jump to "+addr);
+	}
+	
+	/*
+	 * jeq [navesti] - podmineny skok - skace, kdyz 2 nejvyssi hodnoty na
+	 * zasobniku jsou stejne
+	 */
+	private void doJeqInstruction() throws BytecodeOverflowException, EmptyStackPopException {
+		Integer addr = bc.nextInteger();
+		Integer i1 = (Integer) s.pop();
+		Integer i2 = (Integer) s.pop();
+		
+		if(i1.intValue() == i2.intValue()) {
+			// kdyz jsou stejne, skoc
+			bc.jumpTo(addr);
+			Util.debugMsg("   Jeq true: "+i1.intValue()+"=="+i2.intValue()+", jump to "+addr);
+		} else
+			Util.debugMsg("   Jeq false: "+i1.intValue()+"!="+i2.intValue()+", continuing execution");
+		
+		
+	}
+	/*
+	 * jneq [navesti] - skok, dyz nejsou stejne
+	 */
+	private void doJneqInstruction() throws BytecodeOverflowException, EmptyStackPopException {
+		Integer addr = bc.nextInteger();
+		Integer i1 = (Integer) s.pop();
+		Integer i2 = (Integer) s.pop();
+		
+		if(i1.intValue() != i2.intValue()) {
+			// kdyz nejsou stejne, skoc
+			bc.jumpTo(addr);
+			Util.debugMsg("   Jneq true: "+i1.intValue()+"!="+i2.intValue()+", jump to "+addr);
+		} else
+			Util.debugMsg("   Jneq false: "+i1.intValue()+"=="+i2.intValue()+", continuing execution");
+		
+		
+	}
+	/*
+	 * jlt [navesti] - skok, kdyz nejvyssi hodnota na zasobniku je mensi nez 2
+	 * nejvyssi
+	 */
+	private void doJltInstruction() throws BytecodeOverflowException, EmptyStackPopException {
+		Integer addr = bc.nextInteger();
+		Integer i1 = (Integer) s.pop();
+		Integer i2 = (Integer) s.pop();
+		
+		if(i1.intValue() < i2.intValue()) {
+			bc.jumpTo(addr);
+			Util.debugMsg("   Jlt true: "+i1.intValue()+"<"+i2.intValue()+", jump to "+addr);
+		} else
+			Util.debugMsg("   Jlt false: "+i1.intValue()+">="+i2.intValue()+", continuing execution");
+		
+	}
+	/*
+	 * jgt [navesti] - skok, kdyz nejvyssi hodnota na zasobniku je vetsi nez 2
+	 * nejvyssi
+	 */
+	private void doJgtInstruction() throws BytecodeOverflowException, EmptyStackPopException {
+		Integer addr = bc.nextInteger();
+		Integer i1 = (Integer) s.pop();
+		Integer i2 = (Integer) s.pop();
+		
+		if(i1.intValue() > i2.intValue()) {
+			bc.jumpTo(addr);
+			Util.debugMsg("   Jgt true: "+i1.intValue()+">"+i2.intValue()+", jump to "+addr);
+		} else
+			Util.debugMsg("   Jgt false: "+i1.intValue()+"<="+i2.intValue()+", continuing execution");
+		
+	}
+	
+	/*
+	 * jelt [navesti] - mensi nebo rovno
+	 */
+	private void doJeltInstruction() throws BytecodeOverflowException, EmptyStackPopException {
+		Integer addr = bc.nextInteger();
+		Integer i1 = (Integer) s.pop();
+		Integer i2 = (Integer) s.pop();
+		
+		if(i1.intValue() <= i2.intValue()) {
+			bc.jumpTo(addr);
+			Util.debugMsg("   Jgt true: "+i1.intValue()+"<="+i2.intValue()+", jump to "+addr);
+		} else
+			Util.debugMsg("   Jgt false: "+i1.intValue()+">"+i2.intValue()+", continuing execution");
+		
+	}
+	
+	/*
+	 * jegt - vetsi nebo rovno
+	 */
+	private void doJegtInstruction() throws BytecodeOverflowException, EmptyStackPopException {
+		Integer addr = bc.nextInteger();
+		Integer i1 = (Integer) s.pop();
+		Integer i2 = (Integer) s.pop();
+		
+		if(i1.intValue() >= i2.intValue()) {
+			bc.jumpTo(addr);
+			Util.debugMsg("   Jgt true: "+i1.intValue()+">="+i2.intValue()+", jump to "+addr);
+		} else
+			Util.debugMsg("   Jgt false: "+i1.intValue()+"<"+i2.intValue()+", continuing execution");
+		
+	}
+	  
+	 /* 
+	 * stop - ukonceni programu
+	 */
 	private void doStopInstruction() {
 		Date endDate = new Date();
 		double secs = (double) ((endDate.getTime() - startTime.getTime()) / 1000.0);
@@ -325,7 +495,5 @@ public class Interpreter {
 		s.printStack();
 		System.exit(0);
 	}
-	
-	
 
 }
