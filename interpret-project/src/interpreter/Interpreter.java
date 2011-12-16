@@ -2,6 +2,8 @@ package interpreter;
 
 import java.util.Date;
 
+import com.sun.org.apache.xml.internal.serializer.utils.Utils;
+
 import utils.Util;
 import exception.BytecodeOverflowException;
 import exception.EmptyStackPopException;
@@ -103,6 +105,7 @@ public class Interpreter {
 	private Date startTime;
 	private Stack s;
 	private VariablesTable varTable;
+	private Environment env;
 
 	// seznam instrukci
 	/*
@@ -151,7 +154,6 @@ public class Interpreter {
 	 * metoda spusti vyhodnocovani bytecodu
 	 */
 	public void run() {
-		byte b;
 		try {
 			/*
 			 * for (int i = 0; i < bc.size(); i++) { b = bc.nextByte();
@@ -210,12 +212,15 @@ public class Interpreter {
 
 		case ARRDEF_INSTR:
 			str = "ARRDEF_INSTR";
+			doArrdefInstruction();
 			break;
 		case ARRPOP_INSTR:
 			str = "ARRPOP_INSTR";
+			doArrpopInstruction();
 			break;
 		case ARRPUSH_INSTR:
 			str = "ARRPUSH_INSTR";
+			doArrpushInstruction();
 			break;
 		case BADD_INSTR:
 			str = "BADD_INSTR";
@@ -321,12 +326,64 @@ public class Interpreter {
 	 * na tabulku promennych a hodnotu vlozi na zasobnik
 	 */
 	private void doPushVInstruction() throws BytecodeOverflowException,
-			VariableNotFoundException {
+			VariableNotFoundException, StackOverflowException {
 		Integer adr = bc.nextInteger();
 		Object o = varTable.getValue(adr);
+		s.push(o);
 
 		Util.debugMsg("  Push value from address " + adr + " (" + o
 				+ ") to stack");
+	}
+
+	/*
+	 * arrdef [adresa pole]
+	 * 
+	 * - na zasobniku je pocet polozek - po provedeni je pole na teto adrese
+	 */
+	private void doArrdefInstruction() throws EmptyStackPopException, BytecodeOverflowException {
+		Integer arrSize = (Integer)s.pop();
+		Integer addr = bc.nextInteger();
+		
+		Object[] arr = new Object[arrSize];
+		varTable.setVariable(addr, arr);
+		
+		Util.debugMsg("  New array Object["+arrSize+"] create on address "+addr);
+	}
+	
+	/*
+	 * arrpop [adresa pole] - vlozi hodnotu do pole na adrese - nejvyssi hodnota
+	 * zas = index v poli - 2. nejvyssi hodnota zas = hodnota
+	 */
+	private void doArrpopInstruction() throws BytecodeOverflowException, EmptyStackPopException, VariableNotFoundException {
+		Integer addr = bc.nextInteger();
+		Integer index = (Integer)s.pop();
+		Integer value = (Integer)s.pop();
+		
+		((Object[])varTable.getValue(addr))[index] = value;
+		/*
+		Object[] arr = (Object[])varTable.getValue(addr);
+		arr[index] = value;
+		varTable.setVariable(addr, arr);
+		*/
+		Integer valueCheck = (Integer)(((Object[])varTable.getValue(addr))[index]);
+		Util.debugMsg("  Object[] array at address "+addr+" changed: arr["+index+"]="+valueCheck);
+	}
+	
+	/*
+	 * arrpush [adresa pole] - z pole na adrese vlozi hodnotu na vrchol
+	 * zasobniku - nejvyssi hodnota zas = index v poli -> vlozi hodnotu na
+	 * zasobniku
+	 */
+	private void doArrpushInstruction() throws BytecodeOverflowException, EmptyStackPopException, VariableNotFoundException, StackOverflowException {
+		Integer addr = bc.nextInteger();
+		Integer index = (Integer)s.pop();
+		
+		Integer value = (Integer)(((Object[])varTable.getValue(addr))[index]);
+		s.push(value);
+		//arr[index] = value;
+		//varTable.setVariable(addr, arr);
+		
+		Util.debugMsg("  Object "+value+" from array Object[] address "+addr+" pushed to stack (stack top: "+(Integer)s.top()+")");
 	}
 
 	/*
@@ -373,6 +430,21 @@ public class Interpreter {
 		Util.debugMsg("   Multiply " + i2 + " * " + i1 + ", result on stack: "
 				+ s.top());
 	}
+	
+	/*
+	 * mjmp [navesti]
+	 *  	- skoci na navesti metody
+	 *  	- vytvori kopii environmentu, vlozi do stacku enviromentu a nastavi callstack
+	 */
+	private void doMjmpInstruction() {
+		
+	}
+	
+	/*
+	 *  mret
+	 *  	- ukonceni metody
+	 *  	- po zavolani se vraci dle callstacku na pozici callstack+1
+	 */
 
 	/*
 	 * jmp [navesti] - nepodmineny skok
@@ -380,111 +452,130 @@ public class Interpreter {
 	private void doJmpInstruction() throws BytecodeOverflowException {
 		Integer addr = bc.nextInteger();
 		bc.jumpTo(addr);
-		
-		Util.debugMsg("   Jump to "+addr);
+
+		Util.debugMsg("   Jump to " + addr);
 	}
-	
+
 	/*
 	 * jeq [navesti] - podmineny skok - skace, kdyz 2 nejvyssi hodnoty na
 	 * zasobniku jsou stejne
 	 */
-	private void doJeqInstruction() throws BytecodeOverflowException, EmptyStackPopException {
+	private void doJeqInstruction() throws BytecodeOverflowException,
+			EmptyStackPopException {
 		Integer addr = bc.nextInteger();
 		Integer i1 = (Integer) s.pop();
 		Integer i2 = (Integer) s.pop();
-		
-		if(i1.intValue() == i2.intValue()) {
+
+		if (i1.intValue() == i2.intValue()) {
 			// kdyz jsou stejne, skoc
 			bc.jumpTo(addr);
-			Util.debugMsg("   Jeq true: "+i1.intValue()+"=="+i2.intValue()+", jump to "+addr);
+			Util.debugMsg("   Jeq true: " + i1.intValue() + "=="
+					+ i2.intValue() + ", jump to " + addr);
 		} else
-			Util.debugMsg("   Jeq false: "+i1.intValue()+"!="+i2.intValue()+", continuing execution");
-		
-		
+			Util.debugMsg("   Jeq false: " + i1.intValue() + "!="
+					+ i2.intValue() + ", continuing execution");
+
 	}
+
 	/*
 	 * jneq [navesti] - skok, dyz nejsou stejne
 	 */
-	private void doJneqInstruction() throws BytecodeOverflowException, EmptyStackPopException {
+	private void doJneqInstruction() throws BytecodeOverflowException,
+			EmptyStackPopException {
 		Integer addr = bc.nextInteger();
 		Integer i1 = (Integer) s.pop();
 		Integer i2 = (Integer) s.pop();
-		
-		if(i1.intValue() != i2.intValue()) {
+
+		if (i1.intValue() != i2.intValue()) {
 			// kdyz nejsou stejne, skoc
 			bc.jumpTo(addr);
-			Util.debugMsg("   Jneq true: "+i1.intValue()+"!="+i2.intValue()+", jump to "+addr);
+			Util.debugMsg("   Jneq true: " + i1.intValue() + "!="
+					+ i2.intValue() + ", jump to " + addr);
 		} else
-			Util.debugMsg("   Jneq false: "+i1.intValue()+"=="+i2.intValue()+", continuing execution");
-		
-		
+			Util.debugMsg("   Jneq false: " + i1.intValue() + "=="
+					+ i2.intValue() + ", continuing execution");
+
 	}
+
 	/*
 	 * jlt [navesti] - skok, kdyz nejvyssi hodnota na zasobniku je mensi nez 2
 	 * nejvyssi
 	 */
-	private void doJltInstruction() throws BytecodeOverflowException, EmptyStackPopException {
+	private void doJltInstruction() throws BytecodeOverflowException,
+			EmptyStackPopException {
 		Integer addr = bc.nextInteger();
 		Integer i1 = (Integer) s.pop();
 		Integer i2 = (Integer) s.pop();
-		
-		if(i1.intValue() < i2.intValue()) {
+
+		if (i1.intValue() < i2.intValue()) {
 			bc.jumpTo(addr);
-			Util.debugMsg("   Jlt true: "+i1.intValue()+"<"+i2.intValue()+", jump to "+addr);
+			Util.debugMsg("   Jlt true: " + i1.intValue() + "<" + i2.intValue()
+					+ ", jump to " + addr);
 		} else
-			Util.debugMsg("   Jlt false: "+i1.intValue()+">="+i2.intValue()+", continuing execution");
-		
+			Util.debugMsg("   Jlt false: " + i1.intValue() + ">="
+					+ i2.intValue() + ", continuing execution");
+
 	}
+
 	/*
 	 * jgt [navesti] - skok, kdyz nejvyssi hodnota na zasobniku je vetsi nez 2
 	 * nejvyssi
 	 */
-	private void doJgtInstruction() throws BytecodeOverflowException, EmptyStackPopException {
+	private void doJgtInstruction() throws BytecodeOverflowException,
+			EmptyStackPopException {
 		Integer addr = bc.nextInteger();
 		Integer i1 = (Integer) s.pop();
 		Integer i2 = (Integer) s.pop();
-		
-		if(i1.intValue() > i2.intValue()) {
+
+		if (i1.intValue() > i2.intValue()) {
 			bc.jumpTo(addr);
-			Util.debugMsg("   Jgt true: "+i1.intValue()+">"+i2.intValue()+", jump to "+addr);
+			Util.debugMsg("   Jgt true: " + i1.intValue() + ">" + i2.intValue()
+					+ ", jump to " + addr);
 		} else
-			Util.debugMsg("   Jgt false: "+i1.intValue()+"<="+i2.intValue()+", continuing execution");
-		
+			Util.debugMsg("   Jgt false: " + i1.intValue() + "<="
+					+ i2.intValue() + ", continuing execution");
+
 	}
-	
+
 	/*
 	 * jelt [navesti] - mensi nebo rovno
 	 */
-	private void doJeltInstruction() throws BytecodeOverflowException, EmptyStackPopException {
+	private void doJeltInstruction() throws BytecodeOverflowException,
+			EmptyStackPopException {
 		Integer addr = bc.nextInteger();
 		Integer i1 = (Integer) s.pop();
 		Integer i2 = (Integer) s.pop();
-		
-		if(i1.intValue() <= i2.intValue()) {
+
+		if (i1.intValue() <= i2.intValue()) {
 			bc.jumpTo(addr);
-			Util.debugMsg("   Jgt true: "+i1.intValue()+"<="+i2.intValue()+", jump to "+addr);
+			Util.debugMsg("   Jgt true: " + i1.intValue() + "<="
+					+ i2.intValue() + ", jump to " + addr);
 		} else
-			Util.debugMsg("   Jgt false: "+i1.intValue()+">"+i2.intValue()+", continuing execution");
-		
+			Util.debugMsg("   Jgt false: " + i1.intValue() + ">"
+					+ i2.intValue() + ", continuing execution");
+
 	}
-	
+
 	/*
 	 * jegt - vetsi nebo rovno
 	 */
-	private void doJegtInstruction() throws BytecodeOverflowException, EmptyStackPopException {
+	private void doJegtInstruction() throws BytecodeOverflowException,
+			EmptyStackPopException {
 		Integer addr = bc.nextInteger();
 		Integer i1 = (Integer) s.pop();
 		Integer i2 = (Integer) s.pop();
-		
-		if(i1.intValue() >= i2.intValue()) {
+
+		if (i1.intValue() >= i2.intValue()) {
 			bc.jumpTo(addr);
-			Util.debugMsg("   Jgt true: "+i1.intValue()+">="+i2.intValue()+", jump to "+addr);
+			Util.debugMsg("   Jgt true: " + i1.intValue() + ">="
+					+ i2.intValue() + ", jump to " + addr);
 		} else
-			Util.debugMsg("   Jgt false: "+i1.intValue()+"<"+i2.intValue()+", continuing execution");
-		
+			Util.debugMsg("   Jgt false: " + i1.intValue() + "<"
+					+ i2.intValue() + ", continuing execution");
+
 	}
-	  
-	 /* 
+
+	/*
 	 * stop - ukonceni programu
 	 */
 	private void doStopInstruction() {
@@ -493,6 +584,7 @@ public class Interpreter {
 		System.out.println("\nProgram ended with status 0 (OK) in " + secs
 				+ " seconds");
 		s.printStack();
+		varTable.printMemory();
 		System.exit(0);
 	}
 

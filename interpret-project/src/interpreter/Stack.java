@@ -1,5 +1,7 @@
 package interpreter;
 
+import java.util.Arrays;
+
 import exception.EmptyStackPopException;
 import exception.StackOverflowException;
 
@@ -43,6 +45,14 @@ public class Stack {
 		return arr.length;
 	}
 	
+	/**
+	 * TADY BACHA, pomucka pro iterator VariableTables
+	 * @return
+	 */
+	public Object[] items() {
+		return arr;
+	}
+	
 	public void printStack() {
 		System.out.println("Stack content:");
 		Object o = null;
@@ -55,7 +65,9 @@ public class Stack {
 			System.out.print("  "+i+":\t");
 			
 			if(o.getClass() == Integer.class) {
-				System.out.println(((Integer)arr[i]).intValue());
+				System.out.println(((Integer)o).intValue());
+			} else if(o.getClass() == Integer[].class) {
+				System.out.println(Arrays.toString((Object[])o));
 			} else if(o.getClass() == String.class) {
 				System.out.println(((String)o).toString());
 			}
