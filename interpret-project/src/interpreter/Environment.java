@@ -3,7 +3,6 @@ package interpreter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
 import utils.Util;
 
@@ -44,7 +43,7 @@ public class Environment implements IVariableTable {
 	}
 	
 	private VariablesTable topTable() {
-		return varTablesList.get(position);
+		return varTablesList.get(position-1);
 	}
 
 	@Override
@@ -54,6 +53,8 @@ public class Environment implements IVariableTable {
 
 	@Override
 	public Object getValue(Integer address) throws VariableNotFoundException {
+		printMemory();
+		
 		Iterator<VariablesTable> it = variableTablesNegativeIterator();
 		VariablesTable table;
 		int level = varTablesList.size()-1;
@@ -106,13 +107,12 @@ public class Environment implements IVariableTable {
 		return new VariableTablesIterator(varTablesList, true);
 	}
 	
-	private void printMemory() {
+	public void printMemory() {
 		Iterator<VariablesTable> it = variableTablesPositiveIterator();
 		VariablesTable table;
 		int level = 0;
 		
 		System.out.println("Memory variable tables");
-		System.out.println("");
 		
 		while(it.hasNext()) {
 			table = it.next();

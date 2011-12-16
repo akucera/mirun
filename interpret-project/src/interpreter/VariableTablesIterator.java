@@ -20,7 +20,7 @@ public class VariableTablesIterator implements Iterable<VariablesTable>, Iterato
 		this.positive = positive;
 		
 		if(this.positive) this.position = 0;
-		else this.position = varTablesList.size()-1;
+		else this.position = varTablesList.size();
 	}
 	
 	@Override
@@ -36,7 +36,7 @@ public class VariableTablesIterator implements Iterable<VariablesTable>, Iterato
 		}
 		
 		if(this.positive) return varTablesList.get(position++);
-		else return varTablesList.get(position--);
+		else return varTablesList.get(--position);
 	}
 
 	@Override

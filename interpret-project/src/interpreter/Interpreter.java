@@ -2,7 +2,6 @@ package interpreter;
 
 import java.util.Date;
 
-import com.sun.org.apache.xml.internal.serializer.utils.Utils;
 
 import utils.Util;
 import exception.BytecodeOverflowException;
@@ -104,7 +103,8 @@ public class Interpreter {
 	protected Bytecode bc;
 	private Date startTime;
 	private Stack s;
-	private VariablesTable varTable;
+	private java.util.Stack<Integer> callstack;
+	//private VariablesTable varTable;
 	private Environment env;
 
 	// seznam instrukci
@@ -147,7 +147,9 @@ public class Interpreter {
 		this.bc = bytecode;
 		this.startTime = new Date();
 		this.s = new Stack(MAX_STACK_SIZE);
-		this.varTable = new VariablesTable();
+		this.callstack = new java.util.Stack<Integer>();
+		//this.varTable = new VariablesTable();
+		this.env = new Environment();
 	}
 
 	/**
@@ -239,9 +241,11 @@ public class Interpreter {
 		 */
 		case MJMP_INSTR:
 			str = "MJMP_INSTR";
+			doMjmpInstruction();
 			break;
 		case MRET_INSTR:
 			str = "MRET_INSTR";
+			doMretInstruction();
 			break;
 		case JMP_INSTR:
 			str = "JMP_INSTR";
@@ -305,7 +309,8 @@ public class Interpreter {
 		Integer addr = bc.nextInteger();
 		Integer value = ((Integer) s.pop()).intValue();
 
-		varTable.setVariable(addr, value);
+		//varTable.setVariable(addr, value);
+		env.setVariable(addr, value);
 
 		Util.debugMsg("  Poped " + value + ", setting to addres " + addr);
 	}
@@ -328,7 +333,8 @@ public class Interpreter {
 	private void doPushVInstruction() throws BytecodeOverflowException,
 			VariableNotFoundException, StackOverflowException {
 		Integer adr = bc.nextInteger();
-		Object o = varTable.getValue(adr);
+		//Object o = varTable.getValue(adr);
+		Object o = env.getValue(adr);
 		s.push(o);
 
 		Util.debugMsg("  Push value from address " + adr + " (" + o
@@ -345,7 +351,8 @@ public class Interpreter {
 		Integer addr = bc.nextInteger();
 		
 		Object[] arr = new Object[arrSize];
-		varTable.setVariable(addr, arr);
+		//varTable.setVariable(addr, arr);
+		env.setVariable(addr, arr);
 		
 		Util.debugMsg("  New array Object["+arrSize+"] create on address "+addr);
 	}
@@ -359,13 +366,15 @@ public class Interpreter {
 		Integer index = (Integer)s.pop();
 		Integer value = (Integer)s.pop();
 		
-		((Object[])varTable.getValue(addr))[index] = value;
+		//((Object[])varTable.getValue(addr))[index] = value;
+		((Object[])env.getValue(addr))[index] = value;
 		/*
 		Object[] arr = (Object[])varTable.getValue(addr);
 		arr[index] = value;
 		varTable.setVariable(addr, arr);
 		*/
-		Integer valueCheck = (Integer)(((Object[])varTable.getValue(addr))[index]);
+		//Integer valueCheck = (Integer)(((Object[])varTable.getValue(addr))[index]);
+		Integer valueCheck = (Integer)(((Object[])env.getValue(addr))[index]);
 		Util.debugMsg("  Object[] array at address "+addr+" changed: arr["+index+"]="+valueCheck);
 	}
 	
@@ -378,7 +387,8 @@ public class Interpreter {
 		Integer addr = bc.nextInteger();
 		Integer index = (Integer)s.pop();
 		
-		Integer value = (Integer)(((Object[])varTable.getValue(addr))[index]);
+		//Integer value = (Integer)(((Object[])varTable.getValue(addr))[index]);
+		Integer value = (Integer)(((Object[])env.getValue(addr))[index]);
 		s.push(value);
 		//arr[index] = value;
 		//varTable.setVariable(addr, arr);
@@ -436,8 +446,14 @@ public class Interpreter {
 	 *  	- skoci na navesti metody
 	 *  	- vytvori kopii environmentu, vlozi do stacku enviromentu a nastavi callstack
 	 */
-	private void doMjmpInstruction() {
+	private void doMjmpInstruction() throws BytecodeOverflowException {
+		Integer methodAddr = bc.nextInteger();
+		callstack.push(bc.position());
+		Util.debugMsg("   Callstack return address set to "+bc.position());
+		env.pushLevel();
+		bc.jumpTo(methodAddr);
 		
+		Util.debugMsg("   Method jump to address "+methodAddr);
 	}
 	
 	/*
@@ -445,6 +461,12 @@ public class Interpreter {
 	 *  	- ukonceni metody
 	 *  	- po zavolani se vraci dle callstacku na pozici callstack+1
 	 */
+	private void doMretInstruction() throws BytecodeOverflowException {
+		Integer returnAddr = callstack.pop().intValue();
+		bc.jumpTo(returnAddr);
+		
+		Util.debugMsg("   Method return to address "+returnAddr);
+	}
 
 	/*
 	 * jmp [navesti] - nepodmineny skok
@@ -584,7 +606,8 @@ public class Interpreter {
 		System.out.println("\nProgram ended with status 0 (OK) in " + secs
 				+ " seconds");
 		s.printStack();
-		varTable.printMemory();
+		env.printMemory();
+		//varTable.printMemory();
 		System.exit(0);
 	}
 

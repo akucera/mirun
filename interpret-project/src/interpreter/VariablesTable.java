@@ -38,6 +38,12 @@ public class VariablesTable implements IVariableTable {
 		System.out.println("\nVariable table content - "+varMap.size()+" items:\n key\tvalue");
 		
 		Set<Integer> keys = varMap.keySet();
+		
+		if(keys.size() == 0) {
+			System.out.println("Variables table is empty");
+			return;
+		}
+		
 		Object o = null;
 		
 		for (Integer key : keys) {
@@ -67,6 +73,11 @@ public class VariablesTable implements IVariableTable {
 		for (Integer key : keys) {
 			for (int i = 0; i < level; i++) {
 				System.out.print("   ");
+			}
+			
+			if(keys.size() == 0) {
+				System.out.println("Variables table is empty");
+				continue;
 			}
 			
 			System.out.print(key + "\t");

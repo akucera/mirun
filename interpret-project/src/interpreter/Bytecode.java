@@ -57,7 +57,7 @@ public class Bytecode {
 	 */
 	public byte nextByte() throws BytecodeOverflowException {
 		
-		if(position >= size()) throw new BytecodeOverflowException("Bytecode overflow - interpreter tried to read bytes after end of bytes array");
+		if(position >= size()) throw new BytecodeOverflowException("Bytecode overflow - interpreter tried to read bytes after end of bytes array ("+position+")");
 		
 		return bytes[position++];
 	}
@@ -67,7 +67,7 @@ public class Bytecode {
 	}
 	
 	public int nextInt() throws BytecodeOverflowException {
-		if(position + INT_LENGTH > size()) throw new BytecodeOverflowException("Bytecode overflow - interpreter tried to read bytes after end of bytes array");
+		if(position + INT_LENGTH > size()) throw new BytecodeOverflowException("Bytecode overflow - interpreter tried to read bytes after end of bytes array ("+position+")");
 		
 		// vytvor integer ze 4 nasledujich bytu
 		byte[] intBytes = bytesSubarray(position, INT_LENGTH);
@@ -81,9 +81,15 @@ public class Bytecode {
 	}
 	
 	public void jumpTo(int newPosition) throws BytecodeOverflowException {
-		if(newPosition >= size()) throw new BytecodeOverflowException("Bytecode overflow - code tried to jump after end of bytes array");
+		if(newPosition >= size()) throw new BytecodeOverflowException("Bytecode overflow - code tried to jump after end of bytes array ("+newPosition+")");
 		
 		this.position = newPosition;
+	}
+	
+	public void jumpAfter(int newPosition) throws BytecodeOverflowException {
+		if(newPosition+1 >= size()) throw new BytecodeOverflowException("Bytecode overflow - code tried to jump after end of bytes array ("+newPosition+")");
+		
+		this.position = newPosition+1;
 	}
 	
 	/**
