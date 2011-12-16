@@ -69,3 +69,30 @@ jegt
 	
 call [adresa v method table]
 	- volani staticke metody (metoda interpretru) na adrese v tabulce metod
+
+stop
+	- ukonceni programu
+
+
+
+0x01   POP
+0x11   PUSHC
+0x12   PUSHV
+0x20   ARRDEF
+0x2A   ARRPOP
+0x2F   ARRPUSH
+0x30   BADD
+0x31   BSUB
+0x32   BMUL
+0x40   MJMP
+0x4F   MRET
+0x50   JMP
+0x5A   JEQ
+0x5B   JNEQ
+0x5C   JLT
+0x5D   JGT
+0x5E   JELT
+0x5F   JEGT
+0xA0   LAB
+0xC0   CALL
+0xFF   STOP
