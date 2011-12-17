@@ -1,12 +1,22 @@
 package interpreter;
 
-import java.util.Date;
+import interpreter.staticmethod.PrintStaticMethod;
+import interpreter.staticmethod.PrintlnStaticMethod;
+import interpreter.staticmethod.ReadFileIntArrStaticMethod;
+import interpreter.staticmethod.ReadFileIntStaticMethod;
+import interpreter.staticmethod.StaticMethod;
 
+import java.util.Date;
 
 import utils.Util;
 import exception.BytecodeOverflowException;
+import exception.ConstantRedefinitionException;
 import exception.EmptyStackPopException;
+import exception.GlobalVariableTableDestroyException;
 import exception.InvalidInstructionException;
+import exception.MethodNotFoundException;
+import exception.MethodRedefinitionException;
+import exception.ProgramExecutionException;
 import exception.StackOverflowException;
 import exception.VariableNotFoundException;
 
@@ -104,8 +114,11 @@ public class Interpreter {
 	private Date startTime;
 	private Stack s;
 	private java.util.Stack<Integer> callstack;
-	//private VariablesTable varTable;
+	// private VariablesTable varTable;
 	private Environment env;
+	private MethodTable methodTable;
+	
+	private String[] programArgs;
 
 	// seznam instrukci
 	/*
@@ -119,6 +132,7 @@ public class Interpreter {
 	public static final byte POP_INSTR = (byte) 0x01;
 	public static final byte PUSHC_INSTR = (byte) 0x11;
 	public static final byte PUSHV_INSTR = (byte) 0x12;
+	public static final byte PUSHSC_INSTR = (byte) 0x13;
 	public static final byte ARRDEF_INSTR = (byte) 0x20;
 	public static final byte ARRPOP_INSTR = (byte) 0x2A;
 	public static final byte ARRPUSH_INSTR = (byte) 0x2F;
@@ -135,7 +149,8 @@ public class Interpreter {
 	public static final byte JELT_INSTR = (byte) 0x5E;
 	public static final byte JEGT_INSTR = (byte) 0x5F;
 	public static final byte LAB_INSTR = (byte) 0xA0;
-	public static final byte CALL_INSTR = (byte) 0xC0;
+	public static final byte CALL_INSTR = (byte) 0xCA;
+	public static final byte CONSTDEF_INSTR = (byte) 0xCD;
 	public static final byte STOP_INSTR = (byte) 0xFF;
 
 	/**
@@ -143,20 +158,30 @@ public class Interpreter {
 	 * 
 	 * @param bytecode
 	 */
-	public Interpreter(Bytecode bytecode) {
-		this.bc = bytecode;
-		this.startTime = new Date();
-		this.s = new Stack(MAX_STACK_SIZE);
-		this.callstack = new java.util.Stack<Integer>();
-		//this.varTable = new VariablesTable();
-		this.env = new Environment();
+	public Interpreter(Bytecode bytecode, String[] programArgs) {
+		// inicializuj veci okolo interpreteru
+		this.bc = bytecode;	// nastav bytecode
+		this.s = new Stack(MAX_STACK_SIZE);	// vytvor stack volani
+		this.callstack = new java.util.Stack<Integer>();	// vytvor callstack
+		// this.varTable = new VariablesTable();
+		this.env = new Environment();	// vytvor environment
+		this.methodTable = new MethodTable();	// vytvod tabulku metod
+		registerStaticMethods();	// registruj staticke metody dostupne z jazyka
+		
+		// nastav veci tykajici se spusteneho programu
+		this.programArgs = programArgs;
 	}
 
 	/**
 	 * metoda spusti vyhodnocovani bytecodu
 	 */
 	public void run() {
+		this.startTime = new Date();	// nastav cas startu provadeni
 		try {
+			
+			// nastav argumenty programu
+			processProgramArgs(programArgs);
+			
 			/*
 			 * for (int i = 0; i < bc.size(); i++) { b = bc.nextByte();
 			 * System.out.println("Dec: " + b + " ... Hex: " +
@@ -188,12 +213,18 @@ public class Interpreter {
 	 * @param b
 	 * @throws InvalidInstructionException
 	 * @throws VariableNotFoundException
+	 * @throws MethodNotFoundException
+	 * @throws GlobalVariableTableDestroyException
+	 * @throws ConstantRedefinitionException 
+	 * @throws ProgramExecutionException 
 	 */
 	private void processByte(byte b) throws InvalidInstructionException,
 			BytecodeOverflowException, StackOverflowException,
-			EmptyStackPopException, VariableNotFoundException {
+			EmptyStackPopException, VariableNotFoundException,
+			MethodNotFoundException, GlobalVariableTableDestroyException, ConstantRedefinitionException, ProgramExecutionException {
 
 		String str = "";
+		int instrPosition = bc.position() - 1;
 
 		switch (b) {
 
@@ -201,17 +232,18 @@ public class Interpreter {
 			str = "POP_INSTR";
 			doPopInstruction();
 			break;
-
 		case PUSHC_INSTR:
 			str = "PUSHC_INSTR";
 			doPushCInstruction();
 			break;
-
 		case PUSHV_INSTR:
 			str = "PUSHV_INSTR";
 			doPushVInstruction();
 			break;
-
+		case PUSHSC_INSTR:
+			str = "PUSHV_INSTR";
+			doPushscInstruction();
+			break;
 		case ARRDEF_INSTR:
 			str = "ARRDEF_INSTR";
 			doArrdefInstruction();
@@ -277,7 +309,13 @@ public class Interpreter {
 			break;
 		case CALL_INSTR:
 			str = "CALL_INSTR";
+			doCallInstruction();
 			break;
+		case CONSTDEF_INSTR:
+			str = "CONSTDEF_INSTR";
+			doConstdefInstruction();
+			break;
+		
 		/*
 		 * ukoncovaci instrukce - nejvetsi instrukce kdyz najdu tohle instrukci,
 		 * program povazuju za spravne ukonceny
@@ -290,10 +328,48 @@ public class Interpreter {
 		// if instruction is not recognized, throw exception
 		default:
 			throw new InvalidInstructionException(
-					"Unknown instruction called: 0x" + Util.toHexString(b));
+					"Unknown instruction called at position " + instrPosition
+							+ " 0x" + Util.toHexString(b));
 		}
 
-		Util.debugMsg("Instruction:\t0x" + Util.toHexString(b) + "\t" + str);
+		Util.debugMsg("Instruction " + instrPosition + ":\t0x"
+				+ Util.toHexString(b) + "\t" + str);
+	}
+	
+	private void processProgramArgs(String[] args) throws ConstantRedefinitionException, VariableNotFoundException {
+		if(args.length > 10) {
+			endWithError("Arguments count exceeded. Max 10 arguments allowed.");
+		}
+		
+		for (int i = 0; i < args.length; i++) {
+			env.defineConstant(new Integer(i), args[i]);
+		}
+		
+	}
+	
+	private void endWithError(String message) {
+		
+	}
+
+	/**
+	 * Tady se zaregistruji vsechny staticke funkce jazyka
+	 * 
+	 * @throws MethodRedefinitionException
+	 */
+	private void registerStaticMethods() {
+
+		try {
+			methodTable.registerMethod(0, new PrintStaticMethod("print", bc, s,
+					env));
+			methodTable.registerMethod(1, new PrintlnStaticMethod("println",
+					bc, s, env));
+			methodTable.registerMethod(10, new ReadFileIntStaticMethod("readfileint", bc, s, env));
+			methodTable.registerMethod(11, new ReadFileIntArrStaticMethod("readfileintarr", bc, s, env));
+		} catch (MethodRedefinitionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 	/*
@@ -309,7 +385,7 @@ public class Interpreter {
 		Integer addr = bc.nextInteger();
 		Integer value = ((Integer) s.pop()).intValue();
 
-		//varTable.setVariable(addr, value);
+		// varTable.setVariable(addr, value);
 		env.setVariable(addr, value);
 
 		Util.debugMsg("  Poped " + value + ", setting to addres " + addr);
@@ -332,12 +408,27 @@ public class Interpreter {
 	 */
 	private void doPushVInstruction() throws BytecodeOverflowException,
 			VariableNotFoundException, StackOverflowException {
-		Integer adr = bc.nextInteger();
-		//Object o = varTable.getValue(adr);
-		Object o = env.getValue(adr);
+		Integer addr = bc.nextInteger();
+		// Object o = varTable.getValue(adr);
+		Object o = env.getValue(addr);
 		s.push(o);
 
-		Util.debugMsg("  Push value from address " + adr + " (" + o
+		Util.debugMsg("  Push value from address " + addr + " (" + o
+				+ ") to stack");
+	}
+
+	/*
+	 * pushsc [adresa]
+	 *   - vlozi na zasobnik Object string z tabulky konstant
+	 */
+	private void doPushscInstruction() throws BytecodeOverflowException,
+			VariableNotFoundException, StackOverflowException {
+		Integer addr = bc.nextInteger();
+		// Object o = varTable.getValue(adr);
+		Object o = env.getConstant(addr);
+		s.push(o);
+
+		Util.debugMsg("  Push constant from address " + addr + " (" + o
 				+ ") to stack");
 	}
 
@@ -346,54 +437,63 @@ public class Interpreter {
 	 * 
 	 * - na zasobniku je pocet polozek - po provedeni je pole na teto adrese
 	 */
-	private void doArrdefInstruction() throws EmptyStackPopException, BytecodeOverflowException {
-		Integer arrSize = (Integer)s.pop();
+	private void doArrdefInstruction() throws EmptyStackPopException,
+			BytecodeOverflowException {
+		Integer arrSize = (Integer) s.pop();
 		Integer addr = bc.nextInteger();
-		
+
 		Object[] arr = new Object[arrSize];
-		//varTable.setVariable(addr, arr);
+		// varTable.setVariable(addr, arr);
 		env.setVariable(addr, arr);
-		
-		Util.debugMsg("  New array Object["+arrSize+"] create on address "+addr);
+
+		Util.debugMsg("  New array Object[" + arrSize + "] create on address "
+				+ addr);
 	}
-	
+
 	/*
 	 * arrpop [adresa pole] - vlozi hodnotu do pole na adrese - nejvyssi hodnota
 	 * zas = index v poli - 2. nejvyssi hodnota zas = hodnota
 	 */
-	private void doArrpopInstruction() throws BytecodeOverflowException, EmptyStackPopException, VariableNotFoundException {
+	private void doArrpopInstruction() throws BytecodeOverflowException,
+			EmptyStackPopException, VariableNotFoundException {
 		Integer addr = bc.nextInteger();
-		Integer index = (Integer)s.pop();
-		Integer value = (Integer)s.pop();
-		
-		//((Object[])varTable.getValue(addr))[index] = value;
-		((Object[])env.getValue(addr))[index] = value;
+		Integer index = (Integer) s.pop();
+		Integer value = (Integer) s.pop();
+
+		// ((Object[])varTable.getValue(addr))[index] = value;
+		((Object[]) env.getValue(addr))[index] = value;
 		/*
-		Object[] arr = (Object[])varTable.getValue(addr);
-		arr[index] = value;
-		varTable.setVariable(addr, arr);
-		*/
-		//Integer valueCheck = (Integer)(((Object[])varTable.getValue(addr))[index]);
-		Integer valueCheck = (Integer)(((Object[])env.getValue(addr))[index]);
-		Util.debugMsg("  Object[] array at address "+addr+" changed: arr["+index+"]="+valueCheck);
+		 * Object[] arr = (Object[])varTable.getValue(addr); arr[index] = value;
+		 * varTable.setVariable(addr, arr);
+		 */
+		// Integer valueCheck =
+		// (Integer)(((Object[])varTable.getValue(addr))[index]);
+		Integer valueCheck = (Integer) (((Object[]) env.getValue(addr))[index]);
+		Util.debugMsg("  Object[] array at address " + addr + " changed: arr["
+				+ index + "]=" + valueCheck);
 	}
-	
+
 	/*
 	 * arrpush [adresa pole] - z pole na adrese vlozi hodnotu na vrchol
 	 * zasobniku - nejvyssi hodnota zas = index v poli -> vlozi hodnotu na
 	 * zasobniku
 	 */
-	private void doArrpushInstruction() throws BytecodeOverflowException, EmptyStackPopException, VariableNotFoundException, StackOverflowException {
+	private void doArrpushInstruction() throws BytecodeOverflowException,
+			EmptyStackPopException, VariableNotFoundException,
+			StackOverflowException {
 		Integer addr = bc.nextInteger();
-		Integer index = (Integer)s.pop();
-		
-		//Integer value = (Integer)(((Object[])varTable.getValue(addr))[index]);
-		Integer value = (Integer)(((Object[])env.getValue(addr))[index]);
+		Integer index = (Integer) s.pop();
+
+		// Integer value =
+		// (Integer)(((Object[])varTable.getValue(addr))[index]);
+		Integer value = (Integer) (((Object[]) env.getValue(addr))[index]);
 		s.push(value);
-		//arr[index] = value;
-		//varTable.setVariable(addr, arr);
-		
-		Util.debugMsg("  Object "+value+" from array Object[] address "+addr+" pushed to stack (stack top: "+(Integer)s.top()+")");
+		// arr[index] = value;
+		// varTable.setVariable(addr, arr);
+
+		Util.debugMsg("  Object " + value + " from array Object[] address "
+				+ addr + " pushed to stack (stack top: " + (Integer) s.top()
+				+ ")");
 	}
 
 	/*
@@ -440,32 +540,39 @@ public class Interpreter {
 		Util.debugMsg("   Multiply " + i2 + " * " + i1 + ", result on stack: "
 				+ s.top());
 	}
-	
+
 	/*
-	 * mjmp [navesti]
-	 *  	- skoci na navesti metody
-	 *  	- vytvori kopii environmentu, vlozi do stacku enviromentu a nastavi callstack
+	 * mjmp [navesti] - skoci na navesti metody - vytvori kopii environmentu,
+	 * vlozi do stacku enviromentu a nastavi callstack
 	 */
 	private void doMjmpInstruction() throws BytecodeOverflowException {
 		Integer methodAddr = bc.nextInteger();
 		callstack.push(bc.position());
-		Util.debugMsg("   Callstack return address set to "+bc.position());
+		Util.debugMsg("   Callstack return address set to " + bc.position());
 		env.pushLevel();
 		bc.jumpTo(methodAddr);
-		
-		Util.debugMsg("   Method jump to address "+methodAddr);
+
+		Util.debugMsg("   Method jump to address " + methodAddr);
 	}
-	
+
 	/*
-	 *  mret
-	 *  	- ukonceni metody
-	 *  	- po zavolani se vraci dle callstacku na pozici callstack+1
+	 * mret - ukonceni metody - po zavolani se vraci dle callstacku na pozici
+	 * callstack+1
 	 */
-	private void doMretInstruction() throws BytecodeOverflowException {
+	private void doMretInstruction() throws BytecodeOverflowException,
+			GlobalVariableTableDestroyException {
 		Integer returnAddr = callstack.pop().intValue();
 		bc.jumpTo(returnAddr);
-		
-		Util.debugMsg("   Method return to address "+returnAddr);
+
+		// tohle je v podstate garbage collecting
+		// Veskere lokalne vytvorene promenne jsou v objektu variablesTable,
+		// ktery je na vrcholu
+		// zasobniku tabulek. Tato tabulka je vyndana ze zasobniku a neni nikam
+		// prirazena, cimz
+		// zustane viset v pameti a Java ji uklidi vlastnim garbage collectingem
+		env.popLevel();
+
+		Util.debugMsg("   Method return to address " + returnAddr);
 	}
 
 	/*
@@ -598,6 +705,45 @@ public class Interpreter {
 	}
 
 	/*
+	 * call [adresa v method table]
+	 *   - volani staticke metody (metoda interpretru) na adrese v tabulce metod
+	 */
+	private void doCallInstruction() throws BytecodeOverflowException,
+			MethodNotFoundException, EmptyStackPopException, StackOverflowException, ProgramExecutionException {
+		Integer address = bc.nextInteger();
+
+		StaticMethod method = methodTable.method(address);
+		Util.debugMsg("  Calling method \"" + method.getName() + "\"");
+		method.perform();
+	}
+	
+	private void doConstdefInstruction() throws BytecodeOverflowException, ConstantRedefinitionException, VariableNotFoundException {
+		Integer addr = bc.nextInteger();	// vem adresu
+		//Integer constSize = bc.nextInteger();	// vem velikost
+		
+		StringBuilder sb = new StringBuilder();
+		
+		byte b = bc.nextByte();
+		while(b != Bytecode.STRING_END_BYTE) {
+			// TODO pozor na pretypovani byte na char
+			sb.append((char)b);
+			b = bc.nextByte();
+		}
+		
+		/* PUVODNI VERZE PRES POLE s definovanou delkou konstanty
+		// definuj pole bytu, do ktereho se nactou byty konstanty
+		byte[] arr = new byte[constSize];
+		
+		for (int i = 0; i < arr.length; i++) {
+			arr[i] = bc.nextByte();
+		}
+		
+		String str = new String(arr);
+		*/
+		env.defineConstant(addr, sb.toString());
+	}
+
+	/*
 	 * stop - ukonceni programu
 	 */
 	private void doStopInstruction() {
@@ -607,7 +753,7 @@ public class Interpreter {
 				+ " seconds");
 		s.printStack();
 		env.printMemory();
-		//varTable.printMemory();
+		// varTable.printMemory();
 		System.exit(0);
 	}
 

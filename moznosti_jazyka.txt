@@ -1,0 +1,5 @@
+parametry programu
+	- programu muze prijimat textove argumenty (napr. pro vstupni a vystupni souboru atd)
+	- argumentu je povoleno 10
+	- z jazyka se k argumentum programu pristupuje pres specialni konstrukci
+	- argumenty jsou ukladany v tabulce konstant na adresach 0 az 9

@@ -11,6 +11,7 @@ import utils.Util;
 public class Bytecode {
 	
 	public static final int INT_LENGTH = 4;
+	public static final byte STRING_END_BYTE = (byte) 0xCE;
 	
 	private byte[] bytes;
 	private int position = 0;

@@ -1,9 +1,12 @@
 pushc [cislo]
-	- vlozit konstantu (hodnotu) na zasobnik
+	- vlozit ciselnou konstantu (hodnotu) na zasobnik
 
 pushv [adresa-cislo]
 	- vlozit promennou (adresu) na zasobnik
 	- podiva se na tabulku promennych a hodnotu vlozi na zasobnik
+
+pushsc [adresa]
+	- vlozi na zasobnik Object string z tabulky konstant
 
 pop [adresa]
 	- vyjmuti ze zasobniku a ulozeni na adresu slotu
@@ -66,18 +69,22 @@ jelt [navesti]
 
 jegt
 	- vetsi nebo rovno
-	
+
+constdef [adresa] [1...n bytu] 0xCE
+	- define textovou konstantu
+	- prvni Integer adresa, druhy delka stringu
+	- potom se ctou byty, ze kterych se sestavi string az do ukoncovaciho bytu 0xCE (nepatri ke stringu)
+
 call [adresa v method table]
 	- volani staticke metody (metoda interpretru) na adrese v tabulce metod
 
 stop
 	- ukonceni programu
 
-
-
 0x01   POP
 0x11   PUSHC
 0x12   PUSHV
+0x13   PUSHSC
 0x20   ARRDEF
 0x2A   ARRPOP
 0x2F   ARRPUSH
@@ -94,5 +101,11 @@ stop
 0x5E   JELT
 0x5F   JEGT
 0xA0   LAB
-0xC0   CALL
+0xCA   CALL
+0xCD   CONSTDEF
 0xFF   STOP
+
+
+TABULKA KONSTANT
+	- na zacatku bytecodu
+	- instrukce CONSTDEF

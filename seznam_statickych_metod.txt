@@ -1,0 +1,14 @@
+NAZEV		ADR.DEC		ADR.HEX			POPIS, PARAMETRY
+---------------------------------------------------------------
+print			0		0x00			vytiskne objekt z vrcholu zasobniku na vystup pomoci Object.toString() bez odradkovani (jako java Sys.out.print())
+
+println			1		0x01			vytiskne objekt z vrcholu zasobniku na vystup pomoci Object.toString() s odradkovani (jako java Sys.out.println())
+
+
+readfileint		10		0x0A			nacte ze souboru jeden (prvni) Integer na zasobnik
+										- 1. na zasobniku = nazev souboru
+										- pokud se neco nepodari (soubor neexistuje), interpreter skonci
+
+readfileintarr	11		0x0B			nacte ze souboru pole Integeru do promenne
+										- 1. na zasobniku = nazev souboru
+										- 2. na zasobniku = adresa pole

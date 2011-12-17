@@ -33,18 +33,21 @@ public class VariablesTable implements IVariableTable {
 		varMap.remove(address);
 	}
 	
+	public int count() {
+		return varMap.size();
+	}
+	
 	public void printMemory() {
 		
-		System.out.println("\nVariable table content - "+varMap.size()+" items:\n key\tvalue");
+		//System.out.println("\nVariable table content - "+varMap.size()+" items:\n key\tvalue");
 		
-		Set<Integer> keys = varMap.keySet();
-		
-		if(keys.size() == 0) {
-			System.out.println("Variables table is empty");
+		if(varMap.size() == 0) {
+			System.out.println("Empty");
 			return;
 		}
 		
 		Object o = null;
+		Set<Integer> keys = varMap.keySet();
 		
 		for (Integer key : keys) {
 			System.out.print(" " + key + "\t");
@@ -54,9 +57,11 @@ public class VariablesTable implements IVariableTable {
 			if(o.getClass() == Integer.class) {
 				System.out.println("Integer: " + ((Integer)o).intValue());
 			} else if(o.getClass() == Object[].class) {
-				System.out.println("Integer[]: "+Arrays.toString((Object[])o));
+				System.out.println("Object[]: "+Arrays.toString((Object[])o));
+			} else if(o.getClass() == Integer[].class) {
+				System.out.println("Integer[]: "+Arrays.toString((Integer[])o));
 			} else if(o.getClass() == String.class) {
-				System.out.println("String: " + ((String)o).toString());
+				System.out.println("String: \"" + ((String)o).toString()+"\"");
 			} else {
 				System.out.println("Unknown Object: " + o.toString());
 			}
@@ -69,6 +74,13 @@ public class VariablesTable implements IVariableTable {
 		
 		Set<Integer> keys = varMap.keySet();
 		Object o = null;
+		
+		if(varMap.size() == 0) {
+			for (int i = 0; i < level; i++) {
+				System.out.print("   ");
+			}
+			System.out.println("Empty");
+		}
 		
 		for (Integer key : keys) {
 			for (int i = 0; i < level; i++) {
@@ -87,9 +99,11 @@ public class VariablesTable implements IVariableTable {
 			if(o.getClass() == Integer.class) {
 				System.out.println("Integer: " + ((Integer)o).intValue());
 			} else if(o.getClass() == Object[].class) {
-				System.out.println("Integer[]: "+Arrays.toString((Object[])o));
+				System.out.println("Object[]: "+Arrays.toString((Object[])o));
+			} else if(o.getClass() == Integer[].class) {
+				System.out.println("Integer[]: "+Arrays.toString((Integer[])o));
 			} else if(o.getClass() == String.class) {
-				System.out.println("String: " + ((String)o).toString());
+				System.out.println("String: \"" + ((String)o).toString()+"\"");
 			} else {
 				System.out.println("Unknown Object: " + o.toString());
 			}
