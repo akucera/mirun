@@ -10,7 +10,7 @@ import tree.BinaryTree.Operator;
 /**
  * Vnitrni forma: vyraz.
  */
-public abstract class ExpressionTree extends Tree {
+public abstract class ExpressionTree extends AvailableTree {
 
     public ExpressionTree(Position start, Position end) {
         super(start, end);

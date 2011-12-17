@@ -15,8 +15,7 @@ public class AssignmentTree extends AvailableTree {
     private MethodTree method;
     private boolean leftMethod;
 
-    public AssignmentTree(Position start, Position end, IdentifierTree identifier,
-            ExpressionTree expression, MethodTree method, boolean leftMethod) {
+    public AssignmentTree(Position start, Position end, IdentifierTree identifier, ExpressionTree expression, MethodTree method, boolean leftMethod) {
         super(start, end);
         this.identifier = identifier;
         this.leftMethod = leftMethod;

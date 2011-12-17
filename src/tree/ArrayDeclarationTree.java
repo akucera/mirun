@@ -1,10 +1,12 @@
 package tree;
 
 public class ArrayDeclarationTree extends DeclarationTree {
-
-	public ArrayDeclarationTree(Position start, Position end) {
+	
+	private ArrayTree arrTree;
+	
+	public ArrayDeclarationTree(Position start, Position end, ArrayTree arrTree) {
 		super(start, end);
-		// TODO Auto-generated constructor stub
+		this.arrTree = arrTree;
 	}
 
 	@Override
@@ -16,7 +18,14 @@ public class ArrayDeclarationTree extends DeclarationTree {
 	@Override
 	public void generate(Context ctx) {
 		// TODO Auto-generated method stub
+	}
 
+	public ArrayTree getArrTree() {
+		return arrTree;
+	}
+
+	public void setArrTree(ArrayTree arrTree) {
+		this.arrTree = arrTree;
 	}
 
 }

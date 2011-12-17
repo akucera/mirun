@@ -7,6 +7,10 @@ package compiler;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import tree.ArrayAccessorTree;
+import tree.ArrayAssignmentTree;
+import tree.ArrayTree;
 import tree.AssignmentTree;
 import tree.AvailableTree;
 import tree.BinaryTree;
@@ -27,6 +31,7 @@ import tree.MethodTree;
 import tree.Position;
 import tree.PrintTree;
 import tree.ProgramTree;
+import tree.ReturnTree;
 import tree.SymTab;
 import tree.Type;
 import tree.VariableDeclarationTree;
@@ -175,15 +180,15 @@ public class Parser {
 		List<DeclarationTree> declarations = new ArrayList<DeclarationTree>();
 		Position p1 = lexer.getBeginPosition();
 		switch (token) {
-			case INTVAR:
-			case STRINGVAR:
-				declarations.add(varDeclaration(symTab));
-				break;
-			case ARRAYVAR:
-				declarations.add(arrayDeclaration(symTab));
-				break;
-			default:
-				break;
+		case INTVAR:
+		case STRINGVAR:
+			declarations.add(varDeclaration(symTab));
+			break;
+		case ARRAYVAR:
+			declarations.add(arrayDeclaration(symTab));
+			break;
+		default:
+			break;
 		}
 		declarationBlockRest(declarations);
 		Position p2 = lexer.getLastEndPosition();
@@ -215,26 +220,45 @@ public class Parser {
 			available(available, symTab);
 			bodyListRest(available, symTab);
 			break;
+		case RETURN:
+			ReturnTree retTree = returnBlock(symTab);
+			available.add(retTree);
+			break;
 		default:
 			break;
 		}
 		Position p2 = lexer.getLastEndPosition();
 		return new BodyListTree(p1, p2, available);
 	}
+	
+	/*
+	 * bodyListRest	: available bodyListRest
+	 * 				  |	returnBlock
+	 * 				  | ;
+	 */
+	void bodyListRest(List<AvailableTree> available, SymTab symTab) {
+		if (token == RETURN) {
+			ReturnTree retTree = returnBlock(symTab);
+			available.add(retTree);
+		} else if ((token != RBRACE) && (token != ENDPROG)) {
+			available(available, symTab);
+			bodyListRest(available, symTab);
+		}
+		return;
+	}
 
 
 	/*
 	 * methodDeclaration : METHOD returnType ID LPAR params RPAR LBRACE bodyList RBRACE
 	 * 					   | ;
-	 *
 	 */
 	void methodDeclaration(List<MethodDeclarationTree> methods) {
 		if (token == METHOD) {
 			Position p1 = lexer.getBeginPosition();
 			accept(METHOD);
+			ReturnType r = returnType();
 			String id = lexer.getIdentifier();
 			accept(ID);
-			ReturnType r = returnType();
 			accept(LPAR);
 			List<Type> paramTypes = new ArrayList<Type>();
 			SymTab paramSymTab = new SymTab();
@@ -243,14 +267,13 @@ public class Parser {
 			accept(RPAR);
 			accept(LBRACE);
 			BodyListTree body = bodyList(paramSymTab);
-			ExpressionTree e = returnBlock(paramSymTab);
 			accept(RBRACE);
 			Position p2 = lexer.getLastEndPosition();
 			if (methodTab.contains(id)) {
 				semanticError(p1, p2, id + " method is already declared");
 			}
 			methodTab.insert(id, r, paramTypes);
-			methods.add(new MethodDeclarationTree(p1, p2, id, r, paramTypes, body, e, paramSymTab));
+			methods.add(new MethodDeclarationTree(p1, p2, id, r, paramTypes, body, paramSymTab));
 		}
 	}
 
@@ -269,13 +292,16 @@ public class Parser {
 	/*
 	 * returnBlock : RETURN vyraz? SEMICOLON;
 	 */
-	ExpressionTree returnBlock(SymTab paramSymTab) {
+	ReturnTree returnBlock(SymTab paramSymTab) {
+		Position p1 = lexer.getBeginPosition();
 		accept(RETURN);
+		ExpressionTree e = null;
 		if (token != SEMICOLON) {
-			ExpressionTree e = vyraz(paramSymTab);
-			return e;
+			e = vyraz(paramSymTab);
 		}
-		return null;
+		accept(SEMICOLON);
+		Position p2 = lexer.getLastEndPosition();
+		return new ReturnTree(p1, p2, e);
 	}
 
 
@@ -302,6 +328,7 @@ public class Parser {
 		i.setVariable(v);
 		i.setLeftValue(true);
 		ExpressionTree e = vyraz(symTab);
+		accept(SEMICOLON);
 		AssignmentTree a = new AssignmentTree(p1, p2, i, e, null, false);
 		return new VariableDeclarationTree(p1, p2, a);
 	}
@@ -311,28 +338,30 @@ public class Parser {
 	 *
 	 */
 	ArrayDeclarationTree arrayDeclaration(SymTab symTab) {
-		//    	Position p1 = lexer.getBeginPosition();
-		//    	Type type = Type.ARRAYVAR;
-		//    	Type arrayType = varType();
-		//    	String n = lexer.getIdentifier();
-		//    	Position pident = lexer.getBeginPosition();
-		//    	accept(ID);
-		//    	Position p2 = lexer.getLastEndPosition();
-		//    	VariableTree v = new VariableTree(p1, p2, n);
-		//    	accept(ASSIGN);
-		//    	v.setType(type);
-		//    	if (symTab.contains(v.getName())) {
-		//    		semanticError(v.getStart(), v.getEnd(), v.getName() + " is already declared");
-		//    	} else {
-		//    		symTab.insert(v);
-		//    	}
-		//    	IdentifierTree i = new IdentifierTree(pident, p2, n);
-		//    	i.setVariable(v);
-		//    	i.setLeftValue(true);
-		//    	ExpressionTree e = vyraz(symTab);
-		//    	AssignmentTree a = new AssignmentTree(p1, p2, i, e, null, false);
-		//    	declarations.add(new VariableDeclarationTree(p1, p2, a));
-		return new ArrayDeclarationTree(null, null);
+		Position p1 = lexer.getBeginPosition();
+		accept(Token.ARRAYVAR);
+		Type type = varType();
+		String n = lexer.getIdentifier();
+		Position pident = lexer.getBeginPosition();
+		accept(ID);
+		Integer arrLength;
+		try {
+			arrLength = Integer.valueOf(lexer.getValue().toString());
+		} catch (NumberFormatException e) {
+			semanticError(lexer.getBeginPosition(), lexer.getEndPosition(), n + " has incorrect length (must be int value)!");
+			return null;
+		}
+		accept(INT);
+		accept(SEMICOLON);
+		Position p2 = lexer.getLastEndPosition();
+		ArrayTree arrTree = new ArrayTree(p1, p2, n, arrLength);
+		if (symTab.contains(n)) {
+			semanticError(p1, p2, n + " is already declared");
+		} else {
+			symTab.insert(arrTree);
+		}
+		ArrayDeclarationTree arrDec = new ArrayDeclarationTree(p1, p2, arrTree);
+		return arrDec;
 	}
 
 	/*
@@ -342,15 +371,15 @@ public class Parser {
 	void declarationBlockRest(List<DeclarationTree> declarations) {
 		if (token != ENDDECLARATION) {
 			switch (token) {
-				case INTVAR:
-				case STRINGVAR:
-					declarations.add(varDeclaration(symTab));
-					break;
-				case ARRAYVAR:
-					declarations.add(arrayDeclaration(symTab));
-					break;
-				default:
-					break;
+			case INTVAR:
+			case STRINGVAR:
+				declarations.add(varDeclaration(symTab));
+				break;
+			case ARRAYVAR:
+				declarations.add(arrayDeclaration(symTab));
+				break;
+			default:
+				break;
 			}
 			declarationBlockRest(declarations);
 		}
@@ -402,34 +431,25 @@ public class Parser {
 			break;
 		case CALL:
 			// TODO rename to CallTree
-			MethodTree m = methodBlock(symTab, false);
+			MethodTree m = methodCall(symTab, false);
 			available.add(m);
 			break;
 		case LBRACKET:
-			//TODO
+			ArrayAssignmentTree arrAssignment = arrayAssignment(symTab);
+			available.add(arrAssignment);
 			break;
 		case INTVAR:
 		case STRINGVAR:
-			//varDeclaration(available, symTab);
+			VariableDeclarationTree v = varDeclaration(symTab);
+			available.add(v);
+			break;
 		case ARRAYVAR:
+			ArrayDeclarationTree arrDec = arrayDeclaration(symTab);
+			available.add(arrDec);
+			break;
 		default:
 			error("expected: available, found: " + token);
 			throw new ParserException();
-		}
-		return;
-	}
-
-	/*
-	 * bodyListRest	: available bodyListRest
-	 * 				  |	returnBlock
-	 * 				  | ;
-	 */
-	void bodyListRest(List<AvailableTree> available, SymTab symTab) {
-		if (token == RETURN) {
-			returnBlock(symTab);
-		} else if ((token != RBRACE) && (token != ENDPROG)) {
-			available(available, symTab);
-			bodyListRest(available, symTab);
 		}
 		return;
 	}
@@ -443,21 +463,21 @@ public class Parser {
 	 */
 	ReturnType returnType() {
 		switch (token) {
-			case INTVAR:
-				accept(INTVAR);
-				return ReturnType.INTVAR;
-			case VOID:
-				accept(VOID);
-				return ReturnType.VOID;
-			case STRINGVAR:
-				accept(STRINGVAR);
-				return ReturnType.STRINGVAR;
-			case ARRAYVAR:
-				accept(ARRAYVAR);
-				return ReturnType.ARRAYVAR;
-			default:
-				error("expected: returnType, found: " + token);
-				throw new ParserException();
+		case INTVAR:
+			accept(INTVAR);
+			return ReturnType.INTVAR;
+		case VOID:
+			accept(VOID);
+			return ReturnType.VOID;
+		case STRINGVAR:
+			accept(STRINGVAR);
+			return ReturnType.STRINGVAR;
+		case ARRAYVAR:
+			accept(ARRAYVAR);
+			return ReturnType.ARRAYVAR;
+		default:
+			error("expected: returnType, found: " + token);
+			throw new ParserException();
 		}
 	}
 
@@ -579,7 +599,7 @@ public class Parser {
 		i.setLeftValue(true);
 		accept(ASSIGN);
 		if (token == CALL) {
-			MethodTree m = methodBlock(symTab, true);
+			MethodTree m = methodCall(symTab, true);
 			accept(SEMICOLON);
 			Position p3 = lexer.getLastEndPosition();
 			return new AssignmentTree(p1, p3, i, null, m, true);
@@ -589,7 +609,59 @@ public class Parser {
 		Position p3 = lexer.getLastEndPosition();
 		return new AssignmentTree(p1, p3, i, e, null, false);
 	}
+	
+	/*
+	 * arrAssignment : arrAccessor ASSIGN vyraz SEMICOLON;
+	 */
+	ArrayAssignmentTree arrayAssignment(SymTab symTab) {
+		Position p1 = lexer.getBeginPosition();
+		MethodTree m = null;
+		ExpressionTree e = null;
+		ArrayAccessorTree arrAccTree = arrayAcces(symTab, false);
+		if (arrAccTree == null) {
+			return null;
+		}
+		accept(ASSIGN);
+		if (token == CALL) {
+			m = methodCall(symTab, true);
+		} else {
+			e = vyraz(symTab);
+		}
+		accept(SEMICOLON);
+		Position p3 = lexer.getLastEndPosition();
+		return new ArrayAssignmentTree(p1, p3, arrAccTree, e, m);
+	}
 
+	/*
+	 * arrAccessor : LBRACKET vyraz RBRACKET ID;
+	 */
+	ArrayAccessorTree arrayAcces(SymTab symTab, boolean isAccess) {
+		Position p1 = lexer.getBeginPosition();
+		accept(LBRACKET);
+		MethodTree accM = null;
+		ExpressionTree accE = null;
+		if (token == CALL) {
+			accM = methodCall(symTab, true);
+		} else {
+			accE = vyraz(symTab);
+		}
+		accept(RBRACKET);
+		String n = lexer.getIdentifier();
+		accept(ID);
+		Position p2 = lexer.getLastEndPosition();
+		Object v = symTab.find(n);
+		if (v == null) {
+			semanticError(p1, p2, "unknown identifier: " + n);
+			return null;
+		}
+		if (!(v instanceof ArrayTree)) {
+			semanticError(p1, p2, "not array: " + n);
+			return null;
+		}
+		ArrayTree arrTree = (ArrayTree) v;
+		return new ArrayAccessorTree(p1, p2, arrTree, accE, accM, isAccess);
+	}
+	
 	/*
 	 * print : PRINTLN LPAR vyraz RPAR SEMICOLON;
 	 */
@@ -603,56 +675,56 @@ public class Parser {
 		Position p2 = lexer.getLastEndPosition();
 		return new PrintTree(p1, p2, e);
 	}
-// TODO other static functions	
-//	length			:	LENGTH LPAR ID RPAR;
-//	rofl			:	ROFL LPAR stringId SEMICOLON ID RPAR SEMICOLON;
-//	wtf			:	WTF LPAR ID SEMICOLON stringId RPAR SEMICOLON;
+	// TODO other static functions	
+	//	length			:	LENGTH LPAR ID RPAR;
+	//	rofl			:	ROFL LPAR stringId SEMICOLON ID RPAR SEMICOLON;
+	//	wtf			:	WTF LPAR ID SEMICOLON stringId RPAR SEMICOLON;
 
 	/*
-	 * methodBlock : METHOD ID LPAR methodBlockParams RPAR;
-	 *
+	 * methodCall :	CALL ID LPAR methodCallParams RPAR SEMICOLON?;
 	 */
-	MethodTree methodBlock(SymTab symTab, boolean isRight) {
+	MethodTree methodCall(SymTab symTab, boolean isRight) {
 		Position p1 = lexer.getBeginPosition();
 		List<ExpressionTree> e = new ArrayList<ExpressionTree>();
-		accept(METHOD);
+		accept(CALL);
 		String n = lexer.getIdentifier();
 		accept(ID);
 		accept(LPAR);
-		methodBlockParams(e, symTab);
+		methodCallParams(e, symTab);
 		accept(RPAR);
+		if (token == SEMICOLON)
+			accept(SEMICOLON);
 		Position p2 = lexer.getLastEndPosition();
 		if (!methodTab.contains(n)) {
 			semanticError(p1, p2, n + " method is not declared");
+			return null;
 		}
 		return new MethodTree(p1, p2, this.name, n, methodTab.find(n), methodTab.findParamTypes(n), e, isRight);
 	}
 
 	/*
-	 * methodBlockParams : vyraz SEMICOLON methodBlockParamsRest
-	 *                   | ;
-	 *
+	 * methodCallParams	: vyraz SEMICOLON methodCallParamsRest
+	 * 					| ;
 	 */
-	void methodBlockParams(List<ExpressionTree> e, SymTab symTab) {
+	void methodCallParams(List<ExpressionTree> e, SymTab symTab) {
 		if (token != RPAR) {
 			e.add(vyraz(symTab));
-			accept(SEMICOLON);
-			methodBlockParamsRest(e, symTab);
+			methodCallParams(e, symTab);
 		}
 	}
-
+	
 	/*
-	 * methodBlockParamsRest : methodBlockParams;
-	 *
+	 * methodCallParamsRest	: SEMICOLON methodCallParams
+	 * 						| ;
 	 */
-	void methodBlockParamsRest(List<ExpressionTree> e, SymTab symTab) {
-		methodBlockParams(e, symTab);
-		return;
+	void methodCallParamsRest(List<ExpressionTree> e, SymTab symTab) {
+		if (token != RPAR) {
+			accept(SEMICOLON);
+			methodCallParams(e, symTab);
+		}
 	}
-
 	/*
 	 * condition : LPAR conditionBody RPAR;
-	 *
 	 */
 	BinaryTree condition(SymTab symTab) {
 		accept(LPAR);
@@ -666,12 +738,9 @@ public class Parser {
 	 */
 	ForTree forCondition(Position p1, SymTab symTab) {
 		DeclarationTree var = varDeclaration(symTab);
-		accept(SEMICOLON);
 		BinaryTree condition = conditionBody(symTab);
 		accept(SEMICOLON);
 		AssignmentTree step = forStep(symTab);
-		accept(SEMICOLON);
-		accept(RPAR);
 		Position p2 = lexer.getLastEndPosition();
 		return new ForTree(p1, p2, var, condition, step, null);
 	}
@@ -762,22 +831,22 @@ public class Parser {
 		Position p2;
 		BinaryTree t;
 		switch (token) {
-			case PLUS:
-				accept(PLUS);
-				o = Operator.ADD;
-				e2 = clen(symTab);
-				p2 = lexer.getBeginPosition();
-				t = new BinaryTree(p1, p2, o, e1, e2);
-				return vyraz2(p1, t, symTab);
-			case MINUS:
-				accept(MINUS);
-				o = Operator.SUB;
-				e2 = clen(symTab);
-				p2 = lexer.getBeginPosition();
-				t = new BinaryTree(p1, p2, o, e1, e2);
-				return vyraz2(p1, t, symTab);
-			default:
-				break;
+		case PLUS:
+			accept(PLUS);
+			o = Operator.ADD;
+			e2 = clen(symTab);
+			p2 = lexer.getBeginPosition();
+			t = new BinaryTree(p1, p2, o, e1, e2);
+			return vyraz2(p1, t, symTab);
+		case MINUS:
+			accept(MINUS);
+			o = Operator.SUB;
+			e2 = clen(symTab);
+			p2 = lexer.getBeginPosition();
+			t = new BinaryTree(p1, p2, o, e1, e2);
+			return vyraz2(p1, t, symTab);
+		default:
+			break;
 		}
 		return e1;
 	}
@@ -826,9 +895,10 @@ public class Parser {
 
 	/*
 	 * faktor :	LPAR vyraz RPAR
-	 *        | konst
-	 *        | ID;
-	 *
+	 * 			| konst
+	 * 			| ID
+	 * 			| arrAccessor
+	 * 			| methodCall;
 	 */
 	ExpressionTree faktor(SymTab symTab) {
 		switch (token) {
@@ -852,18 +922,23 @@ public class Parser {
 			return i;
 		}
 		case INT:
+		case STRING:
 			ExpressionTree e = konst(symTab);
 			return e;
+		case LBRACKET:
+			ArrayAccessorTree arrayAccessorTree = arrayAcces(symTab, true);
+			return arrayAccessorTree;
+		case CALL:
+			MethodTree callTree = methodCall(symTab, true);
+			return callTree;
 		default:
-			error("expected: LPAR|ID|INT|REAL, found: " + token);
+			error("expected: LPAR|ID|ARR|CALL|STRING, found: " + token);
 			throw new ParserException();
 		}
 	}
 
 	/*
 	 * konst : INT
-	 *       | REAL;
-	 *
 	 */
 	ExpressionTree konst(SymTab symTab) {
 		switch (token) {

@@ -19,10 +19,10 @@ methodDeclaration	:	METHOD returnType ID LPAR params RPAR LBRACE bodyList RBRACE
 methodDeclarationsRest	:	SEMICOLON methodDeclaration methodDeclarationsRest
 			|	;
 
-methodCall		:	CALL ID LPAR methodCallParams RPAR SEMICOLON?;
+methodCall		:	CALL ID LPAR methodCallParams RPAR SEMICOLON;
 methodCallParams	:	vyraz methodCallParamsRest
 			|	;
-						
+			
 methodCallParamsRest	:	SEMICOLON methodCallParams
 			|	;
 
@@ -89,17 +89,13 @@ conditionBody		:	vyraz compareOperator vyraz;
 
 forStep			:	assignment;
 
-arrAssignment		:	arrAccessor ASSIGN vyraz SEMICOLON;
+arrAssignment		:	LBRACKET vyraz RBRACKET ID ASSIGN vyraz SEMICOLON;
 // prirazeni pole ve tvaru
 //	pole[index] = hodnota;
 //	priklad:	hodnoty[2] = 10;
 assignment		:	ID ASSIGN vyraz SEMICOLON;
 
-
-// TODO TADY JAK S INT VS ID ??
 arrAccessor		:	LBRACKET vyraz RBRACKET ID;
-arrLength		:	LENGTH ID;
-//arrAccessor		:	LBRACKET INT RBRACKET ID;
 
 
 // definice statickych metod jazyka
@@ -121,10 +117,7 @@ vyraz2	:	PLUS clen vyraz2
 	|	MINUS clen vyraz2		
 	|	;
 	
-clen	:	faktor clen2
-	|	staticMethod
-	|	arrAccessor
-		;
+clen	:	faktor clen2;
 
 clen2	:	TIMES faktor clen2
 	|	DIVIDED faktor clen2
@@ -132,7 +125,9 @@ clen2	:	TIMES faktor clen2
 	
 faktor		:	LPAR vyraz RPAR 
 		|	konst	
-		|	ID;
+		|	ID
+		|	arrAccessor
+		|	methodCall;
 
 konst		:	INT | STRING;
 

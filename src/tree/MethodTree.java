@@ -6,12 +6,14 @@
 package tree;
 
 import java.util.List;
+
+import tree.BinaryTree.Operator;
 import tree.MethodDeclarationTree.ReturnType;
 
 /**
  * Vnitrni forma: if.
  */
-public class MethodTree extends AvailableTree {
+public class MethodTree extends ExpressionTree {
 
     private String programName;
     private String methodName;
@@ -86,4 +88,25 @@ public class MethodTree extends AvailableTree {
         //return String.format("If %s: [%s, %s, %s]", super.toString(), condition);
         return null;
     }
+
+
+	@Override
+	public Type getType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Operator getOperator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public void setType(Type type) {
+		// TODO Auto-generated method stub
+		
+	}
 }

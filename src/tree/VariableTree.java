@@ -10,14 +10,14 @@ package tree;
  */
 public class VariableTree extends Tree {
 
-    private String name;
-    private Type type;
+	protected String name;
+    protected Type type;
     //private int value;
 
     /**
      * Slot, v nemz je tato promenna.
      */
-    private int slot;
+    protected int slot;
 
     public VariableTree(Position start, Position end, String name) {
         super(start, end);

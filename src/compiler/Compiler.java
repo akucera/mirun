@@ -36,14 +36,14 @@ public class Compiler {
         Lexer lex = new Lexer(new FileReader(source));
         Parser p = new Parser(lex);
         ProgramTree t = p.parse();
-        SemanticAnalyzer sa = new SemanticAnalyzer();
-        t.accept(sa);
-        PrintWriter out = new PrintWriter(new FileWriter(dest));
-        Context ctx = new ContextImpl(out);
-        try {
-            t.generate(ctx);
-        } finally {
-            out.close();
-        }
+//        SemanticAnalyzer sa = new SemanticAnalyzer();
+//        t.accept(sa);
+//        PrintWriter out = new PrintWriter(new FileWriter(dest));
+//        Context ctx = new ContextImpl(out);
+//        try {
+//            t.generate(ctx);
+//        } finally {
+//            out.close();
+//        }
     }
 }

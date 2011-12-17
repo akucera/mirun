@@ -153,8 +153,8 @@ public class Lexer {
         if (ch == '"') {
         	ch = nextChar();
         	while (ch != '"') {
-        		if (!Character.isLetter(ch) || !Character.isDigit(ch) || !Character.isWhitespace(ch) ||
-        				(ch != '.') || (ch != '-') || (ch != '_')) {
+        		if (!Character.isLetter(ch) && !Character.isDigit(ch) && !Character.isWhitespace(ch) &&
+        				(ch != '.') && (ch != '-') && (ch != '_') && (ch != ':') && (ch != '!') && (ch != '\\')) {
         			error("invalid character in string : %c", ch);
         			throw new LexerException();
         		}
@@ -162,6 +162,7 @@ public class Lexer {
         		ch = nextChar();
         	}
         	value = word.toString();
+        	ch = nextChar();
         	return STRING;
         }
         if (ch == '(') {

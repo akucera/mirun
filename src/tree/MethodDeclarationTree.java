@@ -20,18 +20,16 @@ public class MethodDeclarationTree extends Tree {
     private List<Type> paramTypes;
     private BodyListTree body;
     private ReturnType returnType;
-    private ExpressionTree retTree;
     private int stackDepth;
 
     public MethodDeclarationTree(Position start, Position end, String name,
             ReturnType returnType, List<Type> paramTypes,
-            BodyListTree body, ExpressionTree retTree, SymTab symTab) {
+            BodyListTree body, SymTab symTab) {
         super(start, end);
         this.name = name;
         this.returnType = returnType;
         this.paramTypes = paramTypes;
         this.body = body;
-        this.retTree = retTree;
         this.symTab = symTab;
     }
 
@@ -45,10 +43,6 @@ public class MethodDeclarationTree extends Tree {
 
     public ReturnType getReturnType() {
         return this.returnType;
-    }
-
-    public ExpressionTree getRetTree() {
-        return this.retTree;
     }
 
     public BodyListTree getBody() {
@@ -93,19 +87,6 @@ public class MethodDeclarationTree extends Tree {
         }
 
         body.generate(ctx);
-        switch (getReturnType()) {
-            case INTVAR:
-                retTree.generate(ctx);
-                ctx.println("ireturn");
-                break;
-            case REALVAR:
-                retTree.generate(ctx);
-                ctx.println("dreturn");
-                break;
-            case VOID:
-                ctx.println("return");
-                break;
-        }
         ctx.println(".end method");
 
     }
