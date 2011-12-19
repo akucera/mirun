@@ -5,17 +5,58 @@
  */
 package compiler;
 
+import static compiler.Token.ARRAYVAR;
+import static compiler.Token.ASSIGN;
+import static compiler.Token.CALL;
+import static compiler.Token.DECLARATION;
+import static compiler.Token.DIVIDED;
+import static compiler.Token.ENDDECLARATION;
+import static compiler.Token.ENDMETHODS;
+import static compiler.Token.ENDPROG;
+import static compiler.Token.EOI;
+import static compiler.Token.EQ;
+import static compiler.Token.FOR;
+import static compiler.Token.GE;
+import static compiler.Token.GT;
+import static compiler.Token.ID;
+import static compiler.Token.IF;
+import static compiler.Token.INT;
+import static compiler.Token.INTVAR;
+import static compiler.Token.LBRACE;
+import static compiler.Token.LBRACKET;
+import static compiler.Token.LE;
+import static compiler.Token.LPAR;
+import static compiler.Token.LT;
+import static compiler.Token.METHOD;
+import static compiler.Token.METHODS;
+import static compiler.Token.MINUS;
+import static compiler.Token.NE;
+import static compiler.Token.PLUS;
+import static compiler.Token.PROG;
+import static compiler.Token.RBRACE;
+import static compiler.Token.RBRACKET;
+import static compiler.Token.RETURN;
+import static compiler.Token.RPAR;
+import static compiler.Token.SEMICOLON;
+import static compiler.Token.STRING;
+import static compiler.Token.STRINGVAR;
+import static compiler.Token.TIMES;
+import static compiler.Token.VOID;
+import static compiler.Token.WHILE;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import tree.ArrayAccessorTree;
 import tree.ArrayAssignmentTree;
+import tree.ArrayDeclarationTree;
 import tree.ArrayTree;
 import tree.AssignmentTree;
 import tree.AvailableTree;
 import tree.BinaryTree;
 import tree.BinaryTree.Operator;
 import tree.BodyListTree;
+import tree.ConstTab;
 import tree.DeclarationTree;
 import tree.ExpressionTree;
 import tree.ForTree;
@@ -24,7 +65,6 @@ import tree.IfTree;
 import tree.LiteralTree;
 import tree.MethodDeclarationTree;
 import tree.MethodDeclarationTree.ReturnType;
-import tree.ArrayDeclarationTree;
 import tree.MethodDeclarationsTree;
 import tree.MethodTab;
 import tree.MethodTree;
@@ -38,7 +78,6 @@ import tree.VariableDeclarationTree;
 import tree.VariableDeclarationsTree;
 import tree.VariableTree;
 import tree.WhileTree;
-import static compiler.Token.*;
 
 /**
  * Syntakticky analyzator.
@@ -58,9 +97,17 @@ public class Parser {
 	 */
 	private SymTab symTab;
 	/**
+	 * Tabulka konstant.
+	 */
+	private ConstTab constTab;
+	/**
 	 * Tabulka metod.
 	 */
 	private MethodTab methodTab;
+	/**
+	 * Tabulka vestavenych metod jazyka.
+	 */
+	private MethodTab builtInMethods;
 	/**
 	 * Pocet semantickych chyb nalezenych v parseru.
 	 */
@@ -74,8 +121,9 @@ public class Parser {
 	 * Vytvori syntakticky analyzator, ktery bude dostavat
 	 * lexikalni symboly od zadaneho lexikalniho analyzatoru.
 	 */
-	public Parser(Lexer lexer) {
+	public Parser(Lexer lexer, MethodTab builtInMethods) {
 		this.lexer = lexer;
+		this.builtInMethods = builtInMethods;
 		nextToken();
 	}
 
@@ -137,6 +185,7 @@ public class Parser {
 	 */
 	ProgramTree program() {
 		symTab = new SymTab();
+		constTab = new ConstTab();
 		methodTab = new MethodTab();
 		Position p1 = lexer.getBeginPosition();
 		accept(PROG);
@@ -156,7 +205,7 @@ public class Parser {
 		accept(ENDPROG);
 		accept(SEMICOLON);
 		Position p2 = lexer.getLastEndPosition();
-		return new ProgramTree(p1, p2, id, methods, declarations, body, symTab);
+		return new ProgramTree(p1, p2, id, methods, declarations, body, symTab, constTab);
 	}
 
 	/*
@@ -207,10 +256,6 @@ public class Parser {
 		case IF:
 		case WHILE:
 		case CALL:
-		case PRINTLN:
-		case LENGTH:
-		case ROFL:
-		case WTF:
 		case FOR:
 		case LBRACKET:
 		case ID:
@@ -262,13 +307,15 @@ public class Parser {
 			accept(LPAR);
 			List<Type> paramTypes = new ArrayList<Type>();
 			SymTab paramSymTab = new SymTab();
-			paramSymTab.setFreeSlot(0);
 			params(paramTypes, paramSymTab);
 			accept(RPAR);
 			accept(LBRACE);
 			BodyListTree body = bodyList(paramSymTab);
 			accept(RBRACE);
 			Position p2 = lexer.getLastEndPosition();
+			if (builtInMethods.contains(id)) {
+				semanticError(p1, p2, id + " method is built-in language method!");
+			}
 			if (methodTab.contains(id)) {
 				semanticError(p1, p2, id + " method is already declared");
 			}
@@ -342,7 +389,6 @@ public class Parser {
 		accept(Token.ARRAYVAR);
 		Type type = varType();
 		String n = lexer.getIdentifier();
-		Position pident = lexer.getBeginPosition();
 		accept(ID);
 		Integer arrLength;
 		try {
@@ -416,19 +462,6 @@ public class Parser {
 			AssignmentTree a = assignment(symTab);
 			available.add(a);
 			break;
-		case PRINTLN: 
-			PrintTree p = print(symTab);
-			available.add(p);
-			break;
-		case LENGTH:
-			//TODO
-			break;
-		case ROFL:
-			//TODO
-			break;
-		case WTF:
-			//TODO
-			break;
 		case CALL:
 			// TODO rename to CallTree
 			MethodTree m = methodCall(symTab, false);
@@ -488,33 +521,35 @@ public class Parser {
 	void params(List<Type> paramTypes, SymTab paramSymTab) {
 		Position p1 = lexer.getBeginPosition();
 		switch (token) {
-		case INTVAR:
-			Type type = varType();
-			String n = lexer.getIdentifier();
-			accept(ID);
-			accept(SEMICOLON);
-			Position p2 = lexer.getLastEndPosition();
-			VariableTree v = new VariableTree(p1, p2, n);
-			v.setType(type);
-			paramTypes.add(type);
-			if (paramSymTab.contains(v.getName())) {
-				semanticError(v.getStart(), v.getEnd(), v.getName() + " is already declared");
-			} else {
-				paramSymTab.insert(v);
-			}
-			paramsRest(paramTypes, paramSymTab);
-			break;
-		default:
-			break;
+			case INTVAR:
+			case STRINGVAR:
+				Type type = varType();
+				String n = lexer.getIdentifier();
+				accept(ID);
+				Position p2 = lexer.getLastEndPosition();
+				VariableTree v = new VariableTree(p1, p2, n);
+				v.setType(type);
+				paramTypes.add(type);
+				if (paramSymTab.contains(v.getName())) {
+					semanticError(v.getStart(), v.getEnd(), v.getName() + " is already declared");
+				} else {
+					paramSymTab.insert(v);
+				}
+				paramsRest(paramTypes, paramSymTab);
+				break;
+			default:
+				break;
 		}
 		return;
 	}
 
 	/*
-	 * paramsRest : params;
+	 * paramsRest : SEMICOLON params
+	 * 			  | ;
 	 */
 	void paramsRest(List<Type> paramTypes, SymTab paramSymTab) {
 		if (token != RPAR) {
+			accept(SEMICOLON);
 			params(paramTypes, paramSymTab);
 		}
 		return;
@@ -667,7 +702,7 @@ public class Parser {
 	 */
 	PrintTree print(SymTab symTab) {
 		Position p1 = lexer.getBeginPosition();
-		accept(PRINTLN);
+		//accept(PRINTLN);
 		accept(LPAR);
 		ExpressionTree e = vyraz(symTab);
 		accept(RPAR);
@@ -695,21 +730,21 @@ public class Parser {
 		if (token == SEMICOLON)
 			accept(SEMICOLON);
 		Position p2 = lexer.getLastEndPosition();
-		if (!methodTab.contains(n)) {
-			semanticError(p1, p2, n + " method is not declared");
+		if (!methodTab.contains(n) && !builtInMethods.contains(n)) {
+			semanticError(p1, p2, n + " method is not declared nor built-in language method");
 			return null;
 		}
 		return new MethodTree(p1, p2, this.name, n, methodTab.find(n), methodTab.findParamTypes(n), e, isRight);
 	}
 
 	/*
-	 * methodCallParams	: vyraz SEMICOLON methodCallParamsRest
+	 * methodCallParams	: vyraz methodCallParamsRest
 	 * 					| ;
 	 */
 	void methodCallParams(List<ExpressionTree> e, SymTab symTab) {
 		if (token != RPAR) {
 			e.add(vyraz(symTab));
-			methodCallParams(e, symTab);
+			methodCallParamsRest(e, symTab);
 		}
 	}
 	
@@ -954,6 +989,7 @@ public class Parser {
 			Object v = lexer.getValue();
 			accept(STRING);
 			Position p2 = lexer.getLastEndPosition();
+			constTab.insert(v.toString());
 			return new LiteralTree(p1, p2, Type.STRINGVAR, v);
 		}
 		default:

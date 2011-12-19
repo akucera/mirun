@@ -97,31 +97,28 @@ assignment		:	ID ASSIGN vyraz SEMICOLON;
 
 arrAccessor		:	LBRACKET vyraz RBRACKET ID;
 
-
+// ponechano z historickych duvodu, staticke metody se budou volat pres call
 // definice statickych metod jazyka
-staticMethod		:	print
-			|	length
-			|	rofl
-						|	wtf;
-print			:	PRINTLN LPAR vyraz RPAR SEMICOLON;
-length			:	LENGTH LPAR ID RPAR;
-rofl			:	ROFL LPAR STRING SEMICOLON ID RPAR SEMICOLON;
-wtf			:	WTF LPAR ID SEMICOLON STRING RPAR SEMICOLON;
+//staticMethod	: print | length | rofl | wtf;
+//print		: PRINTLN LPAR vyraz RPAR SEMICOLON;
+//length	: LENGTH LPAR ID RPAR;
+//rofl		: ROFL LPAR STRING SEMICOLON ID RPAR SEMICOLON;
+//wtf		: WTF LPAR ID SEMICOLON STRING RPAR SEMICOLON;
 
 compareOperator :	EQ | NE | GT | LT | LE | GE ;
 //konec cast pomocna pravidla
 //pouzita gramatika vyrazu ze cviceni
-vyraz	:	clen vyraz2;
+vyraz		:	clen vyraz2;
 
-vyraz2	:	PLUS clen vyraz2
-	|	MINUS clen vyraz2		
-	|	;
+vyraz2		:	PLUS clen vyraz2
+		|	MINUS clen vyraz2		
+		|	;
 	
-clen	:	faktor clen2;
+clen		:	faktor clen2;
 
-clen2	:	TIMES faktor clen2
-	|	DIVIDED faktor clen2
-	|	;
+clen2		:	TIMES faktor clen2
+		|	DIVIDED faktor clen2
+		|	;
 	
 faktor		:	LPAR vyraz RPAR 
 		|	konst	
@@ -153,7 +150,6 @@ STRING		:	QUOTE ('a'..'z'|'A'..'Z'|'0'..'9'|'.'|'-'|'_'|' '|'\\')* QUOTE;
 // string musi byt v uvozovkach ... co stringPromenne? :-/
 
 
-PRINTLN		:	'println';
 DECLARATION	:	'declare';
 METHODS		:	'methods';
 METHOD		:	'method';
@@ -166,10 +162,12 @@ ENDMETHODS	:	'sdohtem';
 CALL		:	'call';
 SEMICOLON	:	';';
 
+// ponechano z historickych duvodu, staticke metody se budou volat pres call
 //staticke metody jazyka
-LENGTH		:	'length';
-ROFL		:	'readfile';		// Read O FiLe - cteni ze souboru
-WTF		:	'writefile';	// Write TO FIle - zapis do souboru
+//LENGTH	:	'length';
+//ROFL		:	'readfile';	// Read O FiLe - cteni ze souboru
+//WTF		:	'writefile';	// Write TO FIle - zapis do souboru
+//PRINTLN	:	'println';
 
 ID		:	('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|'0'..'9')*;
 

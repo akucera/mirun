@@ -18,17 +18,19 @@ public class ProgramTree extends Tree {
     private VariableDeclarationsTree declarations;
     private BodyListTree body;
     private SymTab symTab;
+    private ConstTab constTab;
     private int stackDepth;
 
     public ProgramTree(Position start, Position end, String name,
             MethodDeclarationsTree methods, VariableDeclarationsTree declarations,
-            BodyListTree body, SymTab symTab) {
+            BodyListTree body, SymTab symTab, ConstTab constTab) {
         super(start, end);
         this.name = name;
         this.methods = methods;
         this.declarations = declarations;
         this.body = body;
         this.symTab = symTab;
+        this.constTab = constTab;
     }
 
     public int getStackDepth() {
@@ -61,23 +63,16 @@ public class ProgramTree extends Tree {
         DateFormat df = DateFormat.getDateTimeInstance();
         Calendar c = Calendar.getInstance();
         ctx.println("; Compiled on " + df.format(c.getTime()));
-        ctx.println(".class public output/" + name);
-        ctx.println(".super java/lang/Object");
-        methods.generate(ctx);
-        //test
-        //int i = 10;
-        ctx.println(".method public static main([Ljava/lang/String;)V");
-        ctx.println(".limit stack " + this.getStackDepth());
-        if (this.symTab != null) {
-            ctx.println(".limit locals " + this.symTab.getSize());
-        } else {
-            ctx.println(".limit locals " + 0);
-        }
-        declarations.generate(ctx);
-        body.generate(ctx);
-        ctx.println("return");
-        ctx.println(".end method");
-
+        constTab.genereta(ctx);
+//        methods.generate(ctx);
+//        ctx.println(".limit stack " + this.getStackDepth());
+//        if (this.symTab != null) {
+//            ctx.println(".limit locals " + this.symTab.getSize());
+//        } else {
+//            ctx.println(".limit locals " + 0);
+//        }
+//        declarations.generate(ctx);
+//        body.generate(ctx);
     }
 
     @Override

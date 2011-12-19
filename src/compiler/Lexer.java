@@ -158,7 +158,7 @@ public class Lexer {
         			error("invalid character in string : %c", ch);
         			throw new LexerException();
         		}
-        		word.append(ch);
+        		word.append((char)ch);
         		ch = nextChar();
         	}
         	value = word.toString();

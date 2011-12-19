@@ -77,9 +77,6 @@ public class MethodTree extends ExpressionTree {
             case INTVAR:
                 ctx.println("I");
                 break;
-            case REALVAR:
-                ctx.println("D");
-                break;
         }
     }
 
