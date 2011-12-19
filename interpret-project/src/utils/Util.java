@@ -43,5 +43,23 @@ public class Util {
 		}
 		return new String(hexChars);
 	}
+	
+	public static String toString(Integer[] arr, String delim) {
+		StringBuilder sb = new StringBuilder();
+		
+		for (int i = 0; i < arr.length; i++) {
+			if(i!=0) sb.append(delim);
+			sb.append(arr[i]);
+		}
+		return sb.toString();
+	}
+	
+	/*
+	 * Pretypovani pro vypis. Neni to moc pekne, ale nevim, jak to jinak udelat
+	 */
+	public static String toString(Object o, String delim) {
+		if(o.getClass() == Integer[].class) return toString((Integer[])o, delim);
+		return o.toString();
+	}
 
 }

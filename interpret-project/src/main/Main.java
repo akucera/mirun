@@ -4,7 +4,6 @@ import interpreter.Bytecode;
 import interpreter.Interpreter;
 
 import java.io.File;
-import java.util.Arrays;
 
 public class Main {
 
@@ -12,7 +11,7 @@ public class Main {
 	 * @param args
 	 */
 	
-	public static final boolean DEBUG = false; 
+	public static final boolean DEBUG = true; 
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

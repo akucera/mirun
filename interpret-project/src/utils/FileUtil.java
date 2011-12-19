@@ -1,9 +1,12 @@
 package utils;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 
 public class FileUtil {
 
@@ -42,5 +45,22 @@ public class FileUtil {
         is.close();
         return bytes;
     }
+    
+    public static void writeTextToFile(Object o, File f, boolean append) throws IOException {
+    	try {
+			// zapis data na disk, prepis existujici soubor (false = no append)
+			FileOutputStream fos = new FileOutputStream(f, append);
+			OutputStreamWriter osw = new OutputStreamWriter(fos);
+			BufferedWriter out = new BufferedWriter(osw);
+			
+			out.write(o.toString());
+
+			out.close();
+		} catch (IOException e) {// Catch exception if any
+			throw e;
+		}
+    }
+    
+    
 	
 }

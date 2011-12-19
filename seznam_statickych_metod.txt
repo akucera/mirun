@@ -12,3 +12,12 @@ readfileint		10		0x0A			nacte ze souboru jeden (prvni) Integer na zasobnik
 readfileintarr	11		0x0B			nacte ze souboru pole Integeru do promenne
 										- 1. na zasobniku = nazev souboru
 										- 2. na zasobniku = adresa pole
+
+
+writetofile		20		0x14			zapise do souboru objekt ze zasobniku pomoci (Object.toString())
+										- 1. na zasobniku - nazev souboru
+										- 2. na zasobniku - objek k zapsani
+
+appendtofile	21		0x15			pripoji objekt z vrcholu zasobniku na konec souboru (Object.toString())
+										- 1. na zasobniku - nazev souboru
+										- 2. na zasobniku - objek k zapsani

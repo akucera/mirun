@@ -5,6 +5,7 @@ import interpreter.staticmethod.PrintlnStaticMethod;
 import interpreter.staticmethod.ReadFileIntArrStaticMethod;
 import interpreter.staticmethod.ReadFileIntStaticMethod;
 import interpreter.staticmethod.StaticMethod;
+import interpreter.staticmethod.WriteToFileStaticMethod;
 
 import java.util.Date;
 
@@ -365,6 +366,7 @@ public class Interpreter {
 					bc, s, env));
 			methodTable.registerMethod(10, new ReadFileIntStaticMethod("readfileint", bc, s, env));
 			methodTable.registerMethod(11, new ReadFileIntArrStaticMethod("readfileintarr", bc, s, env));
+			methodTable.registerMethod(20, new WriteToFileStaticMethod("writetofile", bc, s, env));
 		} catch (MethodRedefinitionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
