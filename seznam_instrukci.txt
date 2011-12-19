@@ -46,6 +46,7 @@ mjmp [navesti]
 
 mret
 	- ukonceni metody
+	- vysledek je na zasobniku
 	- po zavolani se vraci dle callstacku na pozici callstack+1
 
 jmp [navesti]
