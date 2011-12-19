@@ -46,8 +46,10 @@ public class ArrayAccessorTree extends ExpressionTree {
 
 	@Override
 	public void generate(Context ctx) {
-		// TODO Auto-generated method stub
-
+		accessExpression.generate(ctx);
+		if (isAccess) {
+			ctx.println("arrpush " + array.getAddress());
+		}
 	}
 
 }

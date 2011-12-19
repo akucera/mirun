@@ -21,8 +21,9 @@ public class ArrayAssignmentTree extends AvailableTree {
 
 	@Override
 	public void generate(Context ctx) {
-		// TODO Auto-generated method stub
-
+		expression.generate(ctx);
+		arrAccessorTree.generate(ctx);
+		ctx.println("arrpop " + arrAccessorTre)
 	}
 
 }

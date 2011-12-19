@@ -17,7 +17,7 @@ public class ArrayDeclarationTree extends DeclarationTree {
 
 	@Override
 	public void generate(Context ctx) {
-		// TODO Auto-generated method stub
+		arrTree.generate(ctx);
 	}
 
 	public ArrayTree getArrTree() {

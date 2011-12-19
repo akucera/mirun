@@ -13,15 +13,17 @@ import tree.BinaryTree.Operator;
 public class LiteralTree extends ExpressionTree {
 
     private Type type;
+    private ConstTab constTab;
     /**
      * Value je instance java.lang.Integer nebo String
      */
     private Object value;
 
-    public LiteralTree(Position start, Position end, Type type, Object value) {
+    public LiteralTree(Position start, Position end, Type type, Object value, ConstTab constTab) {
         super(start, end);
         this.type = type;
         this.value = value;
+        this.constTab = constTab;
     }
 
     public Type getType() {
@@ -49,9 +51,10 @@ public class LiteralTree extends ExpressionTree {
     public void generate(Context ctx) {
         switch (type) {
             case INTVAR:
-                ctx.println("ldc " + value);
+                ctx.println("pushc " + value);
                 break;
             case STRINGVAR:
+            	ctx.println("pushsc " + constTab.getAddress(value.toString()));
             	break;
         }
     }

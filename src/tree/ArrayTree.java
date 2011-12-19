@@ -17,13 +17,13 @@ public class ArrayTree extends VariableTree {
 
     @Override
     public void generate(Context ctx) {
-        // tato metoda by se nemela nikdy zavolat
-        //assert false;
+        ctx.println("pushc " + length);
+        ctx.println("arrdef " + address);
     }
 
     @Override
     public String toString() {
-        return String.format("Array %s: [%s, %s, %d, %d]", super.toString(), name, type, length, slot);
+        return String.format("Array %s: [%s, %s, %d, %d]", super.toString(), name, type, length, address);
     }
 
 	public Integer getLength() {

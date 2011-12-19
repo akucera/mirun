@@ -10,14 +10,18 @@ public class ConstTab {
 	/**
      * Tabulka konstant.
      */
-    private Map<String, Integer> ids = new HashMap<String, Integer>();
     private List<String> id = new ArrayList<String>();
+    private VariableTree treeToBeMatched;
     
     public void insert(String value) {
     	if (id.contains(value)) {
     		return;
     	}
     	id.add(value);
+    	if (treeToBeMatched != null) {
+    		treeToBeMatched.setAddress(id.indexOf(value));
+    		treeToBeMatched = null;
+    	}
     }
 	
     public boolean contains(String value) {
@@ -26,6 +30,10 @@ public class ConstTab {
     
     public int getAddress(String value) {
     	return id.indexOf(value);
+    }
+    
+    public void matchVariableToConstant(VariableTree varTree) {
+    	treeToBeMatched = varTree;
     }
     
     public void genereta(Context ctx) {

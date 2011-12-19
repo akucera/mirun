@@ -58,17 +58,14 @@ public class AssignmentTree extends AvailableTree {
         } else {
             switch (identifier.getType()) {
                 case INTVAR:
-                    expression.setType(Type.INTVAR);
+                    expression.generate(ctx);
+                    ctx.println("pop " + identifier.getVarAddress());
                     break;
+                case STRINGVAR:
+                	// string is in constant table
+                	break;
             }
-            expression.generate(ctx);
         }
-        switch (identifier.getType()) {
-            case INTVAR:
-                ctx.print("i");
-                break;
-        }
-        ctx.println("store " + identifier.getSlot());
     }
 
     @Override

@@ -374,6 +374,8 @@ public class Parser {
 		IdentifierTree i = new IdentifierTree(pident, p2, n);
 		i.setVariable(v);
 		i.setLeftValue(true);
+		if (type == Type.STRINGVAR)
+			constTab.matchVariableToConstant(v);
 		ExpressionTree e = vyraz(symTab);
 		accept(SEMICOLON);
 		AssignmentTree a = new AssignmentTree(p1, p2, i, e, null, false);
@@ -982,7 +984,7 @@ public class Parser {
 			Object v = lexer.getValue();
 			accept(INT);
 			Position p2 = lexer.getLastEndPosition();
-			return new LiteralTree(p1, p2, Type.INTVAR, v);
+			return new LiteralTree(p1, p2, Type.INTVAR, v, constTab);
 		}
 		case STRING: {
 			Position p1 = lexer.getBeginPosition();
@@ -990,7 +992,7 @@ public class Parser {
 			accept(STRING);
 			Position p2 = lexer.getLastEndPosition();
 			constTab.insert(v.toString());
-			return new LiteralTree(p1, p2, Type.STRINGVAR, v);
+			return new LiteralTree(p1, p2, Type.STRINGVAR, v, constTab);
 		}
 		default:
 			break;

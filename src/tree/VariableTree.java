@@ -15,9 +15,9 @@ public class VariableTree extends Tree {
     //private int value;
 
     /**
-     * Slot, v nemz je tato promenna.
+     * Adresa, v nemz je tato promenna.
      */
-    protected int slot;
+    protected int address;
 
     public VariableTree(Position start, Position end, String name) {
         super(start, end);
@@ -43,12 +43,12 @@ public class VariableTree extends Tree {
         this.type = type;
     }
 
-    public int getSlot() {
-        return slot;
+    public int getAddress() {
+        return address;
     }
 
-    public void setSlot(int slot) {
-        this.slot = slot;
+    public void setAddress(int slot) {
+        this.address = slot;
     }
 
     /*
@@ -71,6 +71,6 @@ public class VariableTree extends Tree {
 
     @Override
     public String toString() {
-        return String.format("Variable %s: [%s, %s, %d]", super.toString(), name, type, slot);
+        return String.format("Variable %s: [%s, %s, %d]", super.toString(), name, type, address);
     }
 }

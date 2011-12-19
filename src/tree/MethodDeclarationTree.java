@@ -74,14 +74,6 @@ public class MethodDeclarationTree extends Tree {
                 ctx.println("V");
                 break;
         }
-        //test
-        //int i = 10;
-        ctx.println(".limit stack " + this.getStackDepth());
-        if (this.symTab != null) {
-            ctx.println(".limit locals " + this.symTab.getSize());
-        } else {
-            ctx.println(".limit locals " + 0);
-        }
 
         body.generate(ctx);
         ctx.println(".end method");

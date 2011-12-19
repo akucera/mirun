@@ -45,8 +45,8 @@ public class IdentifierTree extends ExpressionTree {
         this.leftValue = leftValue;
     }
 
-    public int getSlot() {
-        return variable.getSlot();
+    public int getVarAddress() {
+        return variable.getAddress();
     }
 
     @Override
@@ -67,10 +67,12 @@ public class IdentifierTree extends ExpressionTree {
     public void generate(Context ctx) {
         switch (variable.getType()) {
             case INTVAR:
-                ctx.print("i");
+                ctx.println("pushv " + variable.getAddress());
                 break;
+            case STRINGVAR:
+            	ctx.println("pushsc " + variable.getAddress());
+            	break;
         }
-        ctx.println("load " + variable.getSlot());
     }
 
     @Override
