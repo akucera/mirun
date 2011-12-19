@@ -43,6 +43,10 @@ public class ArrayAccessorTree extends ExpressionTree {
 		// TODO Auto-generated method stub
 
 	}
+	
+	public int getArrayAddress() {
+		return array.getAddress();
+	}
 
 	@Override
 	public void generate(Context ctx) {

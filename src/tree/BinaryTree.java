@@ -12,13 +12,12 @@ public class BinaryTree extends ExpressionTree {
 
 	public enum Operator {
 
-		ADD, SUB, MUL, IDIV,
+		ADD, SUB, MUL,
 		EQ, NE, LT, GT, LE, GE
 	}
 	private Operator operator;
 	private ExpressionTree leftOperand;
 	private ExpressionTree rightOperand;
-	private Type type;
 
 	public BinaryTree(Position start, Position end, Operator operator,
 			ExpressionTree leftOperand, ExpressionTree rightOperand) {
@@ -60,7 +59,6 @@ public class BinaryTree extends ExpressionTree {
 
 	@Override
 	public void setType(Type type) {
-		this.type = type;
 	}
 
 	@Override
@@ -71,40 +69,35 @@ public class BinaryTree extends ExpressionTree {
 	@Override
 	public void generate(Context ctx) {
 		leftOperand.generate(ctx);
-		Type t1 = leftOperand.getType();
 		rightOperand.generate(ctx);
-		Type t2 = rightOperand.getType();
 
 		switch (operator) {
-		case ADD:
-			ctx.println("iadd");
-			break;
-		case SUB:
-			ctx.println("isub");
-			break;
-		case MUL:
-			ctx.println("imul");
-			break;
-		case IDIV:
-			ctx.println("idiv");
-			break;
-		case EQ:
-			ctx.println("if_icmpne " + ctx.getAttr("lab"));
-			break;
-		case NE:
-			ctx.println("if_icmpeq " + ctx.getAttr("lab"));
-			break;
-		case LT:
-			ctx.println("if_icmpge " + ctx.getAttr("lab"));
-			break;
-		case GT:
-			ctx.println("if_icmple " + ctx.getAttr("lab"));
-			break;
-		case LE:
-			ctx.println("if_icmpgt " + ctx.getAttr("lab"));
-			break;
-		case GE:
-			ctx.println("if_icmplt " + ctx.getAttr("lab"));
+			case ADD:
+				ctx.println("badd");
+				break;
+			case SUB:
+				ctx.println("bsub");
+				break;
+			case MUL:
+				ctx.println("bmul");
+				break;
+			case EQ:
+				ctx.println("jeq " + ctx.getAttr("lab"));
+				break;
+			case NE:
+				ctx.println("jneq " + ctx.getAttr("lab"));
+				break;
+			case LT:
+				ctx.println("jlt " + ctx.getAttr("lab"));
+				break;
+			case GT:
+				ctx.println("jgt " + ctx.getAttr("lab"));
+				break;
+			case LE:
+				ctx.println("jelt " + ctx.getAttr("lab"));
+				break;
+			case GE:
+				ctx.println("jegt " + ctx.getAttr("lab"));
 		}
 	}
 

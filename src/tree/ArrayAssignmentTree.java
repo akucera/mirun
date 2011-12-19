@@ -23,7 +23,7 @@ public class ArrayAssignmentTree extends AvailableTree {
 	public void generate(Context ctx) {
 		expression.generate(ctx);
 		arrAccessorTree.generate(ctx);
-		ctx.println("arrpop " + arrAccessorTre)
+		ctx.println("arrpop " + arrAccessorTree.getArrayAddress());
 	}
 
 }

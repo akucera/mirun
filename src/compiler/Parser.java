@@ -69,7 +69,6 @@ import tree.MethodDeclarationsTree;
 import tree.MethodTab;
 import tree.MethodTree;
 import tree.Position;
-import tree.PrintTree;
 import tree.ProgramTree;
 import tree.ReturnTree;
 import tree.SymTab;
@@ -699,19 +698,6 @@ public class Parser {
 		return new ArrayAccessorTree(p1, p2, arrTree, accE, accM, isAccess);
 	}
 	
-	/*
-	 * print : PRINTLN LPAR vyraz RPAR SEMICOLON;
-	 */
-	PrintTree print(SymTab symTab) {
-		Position p1 = lexer.getBeginPosition();
-		//accept(PRINTLN);
-		accept(LPAR);
-		ExpressionTree e = vyraz(symTab);
-		accept(RPAR);
-		accept(SEMICOLON);
-		Position p2 = lexer.getLastEndPosition();
-		return new PrintTree(p1, p2, e);
-	}
 	// TODO other static functions	
 	//	length			:	LENGTH LPAR ID RPAR;
 	//	rofl			:	ROFL LPAR stringId SEMICOLON ID RPAR SEMICOLON;
@@ -917,13 +903,13 @@ public class Parser {
 			p2 = lexer.getLastEndPosition();
 			t = new BinaryTree(p1, p2, o, e1, e2);
 			return clen2(p1, t, symTab);
-		case DIVIDED:
-			accept(DIVIDED);
-			e2 = faktor(symTab);
-			p2 = lexer.getLastEndPosition();
-			o = Operator.IDIV;
-			t = new BinaryTree(p1, p2, o, e1, e2);
-			return clen2(p1, t, symTab);
+//		case DIVIDED:
+//			accept(DIVIDED);
+//			e2 = faktor(symTab);
+//			p2 = lexer.getLastEndPosition();
+//			o = Operator.IDIV;
+//			t = new BinaryTree(p1, p2, o, e1, e2);
+//			return clen2(p1, t, symTab);
 		default:
 			break;
 		}

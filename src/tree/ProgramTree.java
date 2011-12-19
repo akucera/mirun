@@ -64,15 +64,10 @@ public class ProgramTree extends Tree {
         Calendar c = Calendar.getInstance();
         ctx.println("; Compiled on " + df.format(c.getTime()));
         constTab.genereta(ctx);
-//        methods.generate(ctx);
-//        ctx.println(".limit stack " + this.getStackDepth());
-//        if (this.symTab != null) {
-//            ctx.println(".limit locals " + this.symTab.getSize());
-//        } else {
-//            ctx.println(".limit locals " + 0);
-//        }
-//        declarations.generate(ctx);
-//        body.generate(ctx);
+        methods.generate(ctx);
+        declarations.generate(ctx);
+        body.generate(ctx);
+        ctx.println("stop");
     }
 
     @Override

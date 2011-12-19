@@ -29,8 +29,6 @@ public interface TreeVisitor {
 
     void visitBodyList(BodyListTree t);
 
-    void visitPrint(PrintTree t);
-    
     void visitIf(IfTree t);
     
     void visitWhile(WhileTree t);

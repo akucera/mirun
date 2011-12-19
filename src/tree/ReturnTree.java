@@ -17,8 +17,10 @@ public class ReturnTree extends AvailableTree {
 
 	@Override
 	public void generate(Context ctx) {
-		// TODO Auto-generated method stub
-
+		if (returnExpression != null) {
+			returnExpression.generate(ctx);
+		}
+		ctx.println("mret");
 	}
 
 }

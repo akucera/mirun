@@ -20,7 +20,6 @@ import tree.MethodDeclarationTree;
 import tree.MethodDeclarationTree.ReturnType;
 import tree.MethodDeclarationsTree;
 import tree.MethodTree;
-import tree.PrintTree;
 import tree.ProgramTree;
 import tree.Tree;
 import tree.TreeVisitor;
@@ -276,14 +275,6 @@ public class SemanticAnalyzer implements TreeVisitor {
         c.accept(this);
         BodyListTree body = t.getBody();
         body.accept(this);
-    }
-
-    public void visitPrint(PrintTree t) {
-        push(Type.INTVAR);
-        ExpressionTree e = t.getExpression();
-        e.accept(this);
-        pop(e.getType());
-        pop(Type.INTVAR);
     }
 
     public void visitDeclarations(VariableDeclarationsTree t) {
