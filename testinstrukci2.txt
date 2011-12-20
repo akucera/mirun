@@ -1,0 +1,56 @@
+; Compiled on Dec 20, 2011 1:25:24 PM
+constdef 0 Vysledek je: 
+constdef 1 ahoj vole
+pushc 10
+arrdef 0
+pushc 0
+pushc 0
+arrpop 0
+pushc 1
+pushc 1
+arrpop 0
+pushc 2
+pushc 2
+arrpop 0
+pushc 3
+pushc 3
+arrpop 0
+pushc 4
+pushc 4
+arrpop 0
+pushc 5
+pushc 5
+arrpop 0
+pushc 6
+pushc 6
+arrpop 0
+pushc 7
+pushc 7
+arrpop 0
+pushc 8
+pushc 8
+arrpop 0
+pushc 9
+pushc 9
+arrpop 0
+pushc 0
+pop 1
+pushc 999
+pop 2
+pushc 5
+pop 3
+pushv 3
+pushc 1
+badd
+arrpush 0
+pop 4
+pushv 2
+pop 5
+; test vypisu na obrazovku, vlozim 5 a prictu z hodnoty na adrese 2 (=999)
+pushc 5
+pushv 2
+badd
+pushsc 0
+call 0
+call 1
+stop

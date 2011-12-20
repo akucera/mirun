@@ -1,5 +1,10 @@
-package bytecode;
-
+package bytecode.instruction;
+/**
+ * Interface instrukce. Tento inferface pak v kompilatoru umozni se vsemi instrukcemi pracovat stejne.
+ * Zaroven udrzuje informace o vsech instrukcich.
+ * @author lukaskukacka
+ *
+ */
 public interface IInstruction {
 
 	public static final String POP_INSTR_NAME = "pop";
@@ -21,7 +26,6 @@ public interface IInstruction {
 	public static final String JGT_INSTR_NAME = "jgt";
 	public static final String JELT_INSTR_NAME = "jelt";
 	public static final String JEGT_INSTR_NAME = "jegt";
-	public static final String LAB_INSTR_NAME = "lab";
 	public static final String CALL_INSTR_NAME = "call";
 	public static final String CONSTDEF_INSTR_NAME = "constdef";
 	public static final String STOP_INSTR_NAME = "stop";
@@ -50,7 +54,15 @@ public interface IInstruction {
 	public static final byte CONSTDEF_INSTR = (byte) 0xCD;
 	public static final byte STOP_INSTR = (byte) 0xFF;
 
+	/**
+	 * 
+	 * @return Pole bytu, ktere vygeneruje instrukce
+	 */
 	public byte[] getBytes();
-
+	
+	/**
+	 * 
+	 * @return Pocet bytu, ktere instrukce (vcetne vsech svych parametru) v bytecode
+	 */
 	public int getLength();
 }

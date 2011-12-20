@@ -6,15 +6,27 @@ eralced;
 
 array int pole 10;
 
-[1]pole = 5;
+[0]pole = 0;
+[1]pole = 1;
+[2]pole = 2;
+[3]pole = 3;
+[4]pole = 4;
+[5]pole = 5;
+[6]pole = 6;
+[7]pole = 7;
+[8]pole = 8;
+[9]pole = 9;
 
-int i = 0;
-int a = 1;
-string b = "ahoj svete";
-string c = "ahoj svete";
-string d = "ahoj svete";
-string e = "ahoj vole";
+int a = 0;
+int b = 999;
+int index = 5;
+int c = [index+1]pole;
+int d = b;
 
-i = a;
+string sb = "ahoj svete";
+string sc = "ahoj svete";
+string sd = "ahoj svete";
+string se = "ahoj vole";
+
 
 margorp;

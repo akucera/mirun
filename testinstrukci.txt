@@ -1,0 +1,33 @@
+; Compiled on Dec 20, 2011 11:39:28 AM
+constdef 0 ahoj\tsvete\naaa
+constdef 1 ahoj svete
+constdef 2 ahoj vole
+pushc 10
+arrdef 0
+pushc 5
+pushc 1
+arrpop 0
+pushc 0
+pop 1
+pushc 1
+pop 2
+pushv 2
+pop 1
+pushc 1
+pushc 2
+mjmp metoda1
+pushc 3
+pushc 4
+jmp label2
+metoda1:
+pushc 5
+pushc 6
+pushc 999
+pop 10
+mret
+pushc 7
+pushc 8
+label2:
+pushc 9
+pushc 10
+stop

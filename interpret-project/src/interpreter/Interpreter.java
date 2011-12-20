@@ -9,6 +9,8 @@ import interpreter.staticmethod.WriteToFileStaticMethod;
 
 import java.util.Date;
 
+import main.Main;
+
 import utils.Util;
 import exception.BytecodeOverflowException;
 import exception.ConstantRedefinitionException;
@@ -753,8 +755,10 @@ public class Interpreter {
 		double secs = (double) ((endDate.getTime() - startTime.getTime()) / 1000.0);
 		System.out.println("\nProgram ended with status 0 (OK) in " + secs
 				+ " seconds");
-		s.printStack();
-		env.printMemory();
+		if(Main.DEBUG) {
+			s.printStack();
+			env.printMemory();
+		}
 		// varTable.printMemory();
 		System.exit(0);
 	}

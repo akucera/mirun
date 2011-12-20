@@ -1,18 +1,25 @@
-package bytecode;
+package bytecode.instruction;
 
 import java.util.StringTokenizer;
 
+import bytecode.Util;
+
 /**
- * Trida pro generickou obecnou instructi, ktera muze za sebou mit jeden integer
+ * Trida pro generickou obecnou instrukci, ktera muze a nemusi za sebou mit jeden integer (vetsinou adresa)
  * @author lukaskukacka
  *
  */
 public class GenericInstruction implements IInstruction {
 
 	private byte instrByte;
-	private int length;
+	private int length = 1;
 	private Integer paramInt = null;
 	
+	/**
+	 * Konstruktor, ktery sestavi instrukci z jejiho bytu a radku instrukce
+	 * @param instrByte
+	 * @param instrLine
+	 */
 	public GenericInstruction(byte instrByte, String instrLine) {
 		this.instrByte = instrByte;
 		
@@ -21,14 +28,20 @@ public class GenericInstruction implements IInstruction {
 		
 		if(st.hasMoreTokens()) {
 			try {
-				this.paramInt = new Integer(st.nextToken());
+				this.paramInt = new Integer(Integer.parseInt(st.nextToken()));
 			} catch (NumberFormatException e) {
 				this.paramInt = null;
 			}
 		}
-		if(paramInt != null) this.length += 4;
+		
+		if(paramInt != null) this.length += 4;	// kdyz mam za sebou parametr cislo (vetsinou adresa), delka je o 4 vetsi
 	}
 	
+	/**
+	 * Vytvori instrukci primo z byte a integeru
+	 * @param instrByte
+	 * @param paramInt
+	 */
 	public GenericInstruction(byte instrByte, Integer paramInt) {
 		this.instrByte = instrByte;
 		this.length = 1;
@@ -54,5 +67,6 @@ public class GenericInstruction implements IInstruction {
 	public int getLength() {
 		return length;
 	}
+
 
 }

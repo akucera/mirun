@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import main.Main;
+
 import utils.Util;
 
 import exception.ConstantRedefinitionException;
@@ -45,7 +47,8 @@ public class Environment implements IVariableTable {
 		if (position == 0)
 			throw new GlobalVariableTableDestroyException(
 					"Trying to remove global variables tables from environment");
-
+		
+		if(Main.DEBUG) printMemory();
 		varTablesList.remove(--position);
 	}
 
@@ -60,7 +63,7 @@ public class Environment implements IVariableTable {
 
 	@Override
 	public Object getValue(Integer address) throws VariableNotFoundException {
-		printMemory();
+		//printMemory();
 
 		Iterator<VariablesTable> it = variableTablesNegativeIterator();
 		VariablesTable table;
