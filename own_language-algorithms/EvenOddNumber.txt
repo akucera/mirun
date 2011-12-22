@@ -1,0 +1,33 @@
+program EvenOddNumber;
+
+methods
+
+method void execute(int num;) {
+	
+	int i = 0;
+	int number = num;
+  	
+	while(i < num) {	
+	   num = num - 2;   
+   }
+  
+   if(num == 0){
+   call println(number);   
+   call print(" is even number.");   
+   }
+   
+   if (num != 0){   
+   call println(number);
+   call print(" is odd number.");   
+   }
+   
+};	
+sdohtem;
+
+declare
+eralced;
+
+call execute(44);
+
+
+margorp;
