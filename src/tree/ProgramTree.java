@@ -64,7 +64,9 @@ public class ProgramTree extends Tree {
         Calendar c = Calendar.getInstance();
         ctx.println("; Compiled on " + df.format(c.getTime()));
         constTab.genereta(ctx);
+        ctx.println("jmp mainProgram");
         methods.generate(ctx);
+        ctx.println("mainProgram:");
         declarations.generate(ctx);
         body.generate(ctx);
         ctx.println("stop");
