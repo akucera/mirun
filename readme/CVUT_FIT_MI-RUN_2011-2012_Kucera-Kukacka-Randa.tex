@@ -78,14 +78,32 @@ To submit your project, send an email to your lab leader with your project attac
   \item some sample input files      
 \end{itemize}
 %-----------------------------------------------------------------------------------------------------
-\section{Spuštìní algoritmu pomocí jazyka}
+\section{Kompilace a spuštìní}
+
+
+
+
 
 
 
 %-----------------------------------------------------------------------------------------------------
-\section{Popis jazyka}
+\section{Vlastní algoritmy}
+Pro otestování funkènosti jazyka jsme zvolili následující jednoduché algoritmy:
 
+ \begin{itemize}
+    \item Hello World
+    \item EvenOddNumber
+    \item FindLargestSmallestNumber
+    \item Bubble sort
+  \end{itemize}
+  
+Ze zadání jsme pak zvolili implementaci problému batohu (\textbf{Backpack - Knapsack problem}). V programu je napevno dán poèet položek a maximální nosnost batohu. Dále pak naèítáme data ze vstupního souboru, který je ve tvaru \textit{váha cena váha cena váha cena} atd..
+Batoh je øešen pomocí hrubé síly a prohledáváním každého možného stavu rekurzí. K tomu je vytvoøena metoda \textit{bruteBag()}. V bìhu programu porovnáváme aktuální øešení s tím nejlepší a pøípadnì je kopírujeme. Výslednou nejlepší cenu spolu s vìcmi, které dáme do batohu, tiskneme do nového souboru.
+
+%-----------------------------------------------------------------------------------------------------
+\section{Popis jazyka}
 Jazyk byl napsán v jazyce Java.
+
 
 Parametry programu:
   \begin{itemize}
@@ -94,10 +112,58 @@ Parametry programu:
     \item z jazyka se k argumentùm programu pøistupuje pøes speciální konstrukci
     \item argumenty jsou ukládány v tabulce konstant na adresách 0 až 9    
   \end{itemize}    
+
+
 %-----------------------------------------------------------------------------------------------------
-\newpage
+\subsection{Abstract syntax tree - AST}
+
+%-----------------------------------------------------------------------------------------------------
+\subsection{Compiler}
+
+
+\subsubsection{Syntaktický analyzátor}
+Syntaktickou analýzu provádíme pomocí Parseru. 
+
+\subsubsection{Lexikální analyzátor}
+Je souèástí Parseru. Ète ze vstupního souboru znaky reprezentující zdrojový program a z tìchto znakù vytváøí symboly programu.
+
+%-----------------------------------------------------------------------------------------------------
+\subsection{Interpret}
+Pøevádí instrukce do bytecode.
+
+%-----------------------------------------------------------------------------------------------------
+\subsection{Bytecode}
+Pøekládá bytecode do instrukcí.
+
+
+%-----------------------------------------------------------------------------------------------------
+%\newpage
+\section{Tabulka konstant}
+  \begin{itemize}
+    \item na zacatku bytecodu
+    \item instrukce CONSTDEF   
+  \end{itemize}
+  	
 \begin{center}
-    \begin{tabular}{|c|c|p{8cm}|}
+    \begin{tabular}{|c|c|c|p{8cm}|}
+    \hline
+    \multicolumn{4}{|c|}{Tabulka konstant} \\
+    \hline
+    Název & Adresa DEC & Adresa HEX & Popis, parametry \\ \hline
+    print & 0 & 0x00 & vytiskne objekt z vrcholu zásobníku na výstup pomocí Object.toString() bez odøádkování (jako java System.out.print()) \\ \hline
+    println & 1 & 0x01 & vytiskne objekt z vrcholu zásobníku na výstup pomocí Object.toString() bez odøádkování (jako java System.out.println()) \\ \hline
+    readfileint & 10 & 0x0A & naète ze souboru jeden (první) Integer na zásobník, 1. na zásobníku = název souboru, pokud se nìco nepodaøí (soubor neexistuje), interpreter skonèí \\ \hline
+    readfileintarr & 11 & 0x0B & naète ze souboru pole Integeru do promìnné, 1. na zásobníku = název souboru, 2. na zásobníku = adresa pole \\ \hline
+    writetofile & 20 & 0x14 & zapíše do souboru objekt ze zásobníku pomocí (Object.toString()), 1. na zásobníku = název souboru, 2. na zásobníku = objekt k zapsání \\ \hline
+    appendtofile & 21 & 0x15 & pøipojí objekt z vrcholu zásobníku na konec souboru (Object.toString()), 1. na zásobníku = název souboru, 2. na zásobníku = objekt k zapsaní \\ \hline
+   
+    \end{tabular}    
+\end{center}
+%-----------------------------------------------------------------------------------------------------
+\section{Tabulka instrukcí}
+%\newpage
+\begin{center}
+    \begin{tabular}{|c|c|p{10cm}|}
     \hline
     \multicolumn{3}{|c|}{Tabulka instrukcí} \\
     \hline
@@ -127,51 +193,5 @@ Parametry programu:
     stop & 0xFF & ukonèení programu \\ \hline
     \end{tabular}
 \end{center}
-%-----------------------------------------------------------------------------------------------------
-\newpage
-TABULKA KONSTANT
-	- na zacatku bytecodu
-	- instrukce CONSTDEF
-
-\begin{center}
-    \begin{tabular}{|c|c|c|p{8cm}|}
-    \hline
-    \multicolumn{4}{|c|}{Tabulka konstant} \\
-    \hline
-    Název & Adresa DEC & Adresa HEX & Popis, parametry \\ \hline
-    print & 0 & 0x00 & vytiskne objekt z vrcholu zásobníku na výstup pomocí Object.toString() bez odøádkování (jako java System.out.print()) \\ \hline
-    println & 1 & 0x01 & vytiskne objekt z vrcholu zásobníku na výstup pomocí Object.toString() bez odøádkování (jako java System.out.println()) \\ \hline
-    readfileint & 10 & 0x0A & naète ze souboru jeden (první) Integer na zásobník, 1. na zásobníku = název souboru, pokud se nìco nepodaøí (soubor neexistuje), interpreter skonèí \\ \hline
-    readfileintarr & 11 & 0x0B & naète ze souboru pole Integeru do promìnné, 1. na zásobníku = název souboru, 2. na zásobníku = adresa pole \\ \hline
-    writetofile & 20 & 0x14 & zapíše do souboru objekt ze zásobníku pomocí (Object.toString()), 1. na zásobníku = název souboru, 2. na zásobníku = objekt k zapsání \\ \hline
-    appendtofile & 21 & 0x15 & pøipojí objekt z vrcholu zásobníku na konec souboru (Object.toString()), 1. na zásobníku = název souboru, 2. na zásobníku = objekt k zapsaní \\ \hline
-   
-    \end{tabular}    
-\end{center}
-%-----------------------------------------------------------------------------------------------------
-\subsection{Interpret}
-%-----------------------------------------------------------------------------------------------------
-\subsection{Bytecode}
-%-----------------------------------------------------------------------------------------------------
-\subsection{Lexer}
-%-----------------------------------------------------------------------------------------------------
-\subsection{Compiler}
-%-----------------------------------------------------------------------------------------------------
-\subsection{Vlastní algoritmy}
-
-Pro otestování funkènosti jazyka jsme zvolili následující algoritmy:
-
- \begin{itemize}
-    \item Hello World
-    \item EvenOddNumber
-    \item FindLargestSmallestNumber
-    \item Bubble sort
-  \end{itemize}
-  
-Ze zadání jsme pak zvolili implementaci problému batohu (Backpack - Knapsack problem).
-
-
-
-
 %-----------------------------------------------------------------------------------------------------
 \end{document} 
