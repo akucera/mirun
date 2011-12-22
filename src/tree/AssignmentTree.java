@@ -51,6 +51,7 @@ public class AssignmentTree extends AvailableTree {
         visitor.visitAssignment(this);
     }
 
+    // TODO nehaze parametry na zasobnik
     @Override
     public void generate(Context ctx) {
         if (leftMethod) {

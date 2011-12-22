@@ -1,5 +1,6 @@
 package interpreter;
 
+import interpreter.staticmethod.LengthStaticMethod;
 import interpreter.staticmethod.PrintStaticMethod;
 import interpreter.staticmethod.PrintlnStaticMethod;
 import interpreter.staticmethod.ReadFileIntArrStaticMethod;
@@ -369,6 +370,7 @@ public class Interpreter {
 			methodTable.registerMethod(10, new ReadFileIntStaticMethod("readfileint", bc, s, env));
 			methodTable.registerMethod(11, new ReadFileIntArrStaticMethod("readfileintarr", bc, s, env));
 			methodTable.registerMethod(20, new WriteToFileStaticMethod("writetofile", bc, s, env));
+			methodTable.registerMethod(100, new LengthStaticMethod("length", bc, s, env));
 		} catch (MethodRedefinitionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

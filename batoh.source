@@ -20,10 +20,12 @@ array int inputarr 9;
 int problemsize = 4;
 array int prices 4;
 array int weights 4;
+int delka = 0;
+delka = call length(prices);;
 
 int capacity = [0]inputarr;
 
-for(int i = 0; i <= 4; i = i + 1;) {
+for(int i = 0; i <= delka; i = i + 1;) {
 	[i]weights = [2*i+1]inputarr;
 	[i]prices = [2*i+2]inputarr;
 }

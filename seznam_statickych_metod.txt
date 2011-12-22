@@ -21,4 +21,5 @@ writetofile		20		0x14			zapise do souboru objekt ze zasobniku pomoci (Object.toS
 appendtofile	21		0x15			pripoji objekt z vrcholu zasobniku na konec souboru (Object.toString())
 										- 1. na zasobniku - nazev souboru
 										- 2. na zasobniku - objek k zapsani
-										
+
+length			100		0x64			- vrati na zasobnik delku objektu na zasobniku

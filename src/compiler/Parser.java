@@ -621,6 +621,7 @@ public class Parser {
 	 * assignment : ID ASSIGN vyraz SEMICOLON;
 	 *
 	 */
+	// TODO tady je BUG, kdyz chci volat metodu v prirazeni, musim dat 2x strednik
 	AssignmentTree assignment(SymTab symTab) {
 		Position p1 = lexer.getBeginPosition();
 		String n = lexer.getIdentifier();

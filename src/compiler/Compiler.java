@@ -114,6 +114,11 @@ public class Compiler {
 		builtInMethods
 				.insert("appendtofile", ReturnType.VOID, paramTypes);
 		
+		paramTypes = new ArrayList<Type>();
+		paramTypes.add(Type.ARRAYVAR);
+		builtInMethods
+				.insert("length", ReturnType.INTVAR, paramTypes);
+		
 		return builtInMethods;
 	}
 }

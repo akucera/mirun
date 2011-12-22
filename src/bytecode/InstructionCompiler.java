@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import tree.Type;
-import tree.MethodDeclarationTree.ReturnType;
-
 import bytecode.instruction.CallInstruction;
 import bytecode.instruction.ConstDefInstruction;
 import bytecode.instruction.GenericInstruction;
@@ -55,6 +52,7 @@ public class InstructionCompiler {
 		mAddrTable.put("readfileintarr", new Integer(11));
 		mAddrTable.put("writetofile", new Integer(20));
 		mAddrTable.put("appendtofile", new Integer(21));
+		mAddrTable.put("length", new Integer(100));
 	}
 
 	/**
