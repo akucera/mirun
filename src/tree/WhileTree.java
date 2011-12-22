@@ -41,7 +41,7 @@ public class WhileTree extends AvailableTree {
         condition.generate(ctx);
         ctx.removeAttr("lab");
         body.generate(ctx);
-        ctx.println("goto " + lab1);
+        ctx.println("jmp " + lab1);
         ctx.println(lab2 + ":");
     }
 

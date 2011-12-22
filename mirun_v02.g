@@ -59,7 +59,6 @@ bodyList 		:	available bodyListRest
 available		:	ifBlock
 			|	whileBlock
 			|	methodCall
-			|	staticMethod
 			|	forBlock
 			|	arrAssignment
 			|	assignment

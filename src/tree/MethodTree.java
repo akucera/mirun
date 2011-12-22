@@ -61,23 +61,7 @@ public class MethodTree extends ExpressionTree {
         for(ExpressionTree e : params){
             e.generate(ctx);
         }
-        ctx.print("invokestatic output/" + programName + "/" + methodName + "(");
-        for (Type t : paramTypes) {
-            switch (t) {
-                case INTVAR:
-                    ctx.print("I");
-                    break;
-            }
-        }
-        ctx.print(")");
-        switch (ret) {
-            case VOID:
-                ctx.println("V");
-                break;
-            case INTVAR:
-                ctx.println("I");
-                break;
-        }
+        ctx.println("call " + methodName);
     }
 
     @Override

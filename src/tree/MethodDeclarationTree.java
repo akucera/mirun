@@ -56,28 +56,8 @@ public class MethodDeclarationTree extends Tree {
 
     @Override
     public void generate(Context ctx) {
-
-        ctx.print(".method public static " + name + "(");
-        for (Type t : paramTypes) {
-            switch (t) {
-                case INTVAR:
-                    ctx.print("I");
-                    break;
-            }
-        }
-        ctx.print(")");
-        switch (getReturnType()) {
-            case INTVAR:
-                ctx.println("I");
-                break;
-            case VOID:
-                ctx.println("V");
-                break;
-        }
-
+        ctx.println(name + ":");
         body.generate(ctx);
-        ctx.println(".end method");
-
     }
 
     @Override
