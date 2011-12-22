@@ -1,0 +1,39 @@
+program FindLargestSmallestNumber;
+
+methods
+sdohtem;
+
+declare
+eralced;
+
+array int numbers 10;
+
+[0]numbers = 33;
+[1]numbers = 111;
+[2]numbers = 22;
+[3]numbers = 55;
+[4]numbers = 888;
+[5]numbers = 3;
+[6]numbers = 33;
+[7]numbers = 999;
+[8]numbers = 777;
+[9]numbers = 555;
+ 
+int smallest = [0]numbers;
+int largetst = [0]numbers;
+
+ for(int i = 1; i < length(numbers); i = i + 1){
+    if([i]numbers > largetst){
+       largetst = [i]numbers;
+    }
+    if ([i]numbers < smallest){
+       smallest = [i]numbers;
+    }                 
+ }
+
+call println("Largest Number is : ");
+call print(largetst);
+call println("Smallest Number is : ");
+call print(smallest);
+
+margorp;

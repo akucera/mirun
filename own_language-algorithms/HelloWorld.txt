@@ -1,0 +1,23 @@
+program HelloWorld;
+
+methods
+
+method void hello(string text; int cislo;) {
+	call println("Tvuj napsany text je:");
+  call println(text);
+  call println("Cislo tvych bot je:");  
+  call println(cislo);
+}
+
+sdohtem;
+
+declare
+eralced;
+
+string text = "Dobry den strycku Fido";
+int cislo = 45;
+cislo = cislo + 5 - 4 - 1;
+
+call hello(text; cislo;);
+
+margorp;
