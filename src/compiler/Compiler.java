@@ -15,11 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.rmi.CORBA.UtilDelegate;
-
 import bytecode.InstructionCompiler;
-
-import com.sun.org.apache.bcel.internal.generic.InstructionConstants;
 
 import tree.Context;
 import tree.MethodDeclarationTree.ReturnType;
@@ -69,7 +65,7 @@ public class Compiler {
 
 		// System.out.println(sw.toString());
 
-		// zapis instrukce to souboru dest.instr
+		// zapis instrukci to souboru dest.instr
 		PrintWriter pw = new PrintWriter(new FileWriter(dest+".instr"));
 		pw.write(sw.toString());
 		pw.close();
@@ -78,12 +74,11 @@ public class Compiler {
 
 		// vytvor compilator bytecodu z instrukci
 		InstructionCompiler compiler = new InstructionCompiler(sw.toString());
+		
 		// zapis bytecode do souboru dest
-
 		FileOutputStream fos = new FileOutputStream(dest);
 		fos.write(compiler.generate());
 		fos.close();
-		// System.out.println(compiler.generate());
 
 	}
 
@@ -107,6 +102,18 @@ public class Compiler {
 		builtInMethods
 				.insert("readfileintarr", ReturnType.ARRAYVAR, paramTypes);
 
+		paramTypes = new ArrayList<Type>();
+		paramTypes.add(Type.STRINGVAR);
+		paramTypes.add(Type.ANY);
+		builtInMethods
+				.insert("writetofile", ReturnType.VOID, paramTypes);
+		
+		paramTypes = new ArrayList<Type>();
+		paramTypes.add(Type.STRINGVAR);
+		paramTypes.add(Type.ANY);
+		builtInMethods
+				.insert("appendtofile", ReturnType.VOID, paramTypes);
+		
 		return builtInMethods;
 	}
 }

@@ -12,6 +12,15 @@ import bytecode.instruction.GenericJmpInstruction;
 import bytecode.instruction.IInstruction;
 import bytecode.instruction.LabelInstruction;
 
+/**
+ * Trida reprezentujici kompilator textovych instrukci do bytecodu.
+ * 
+ * Trida ma konstruktor se seznamem instrukci ve Stringu a jeji metoda
+ * generate() vrati pole byte[] bytecodu.
+ * 
+ * @author Lukas Kukacka
+ * 
+ */
 public class InstructionCompiler {
 
 	private String instrString;
@@ -19,6 +28,12 @@ public class InstructionCompiler {
 	private Map<String, Integer> labTable;
 	private int byteCodeLength;
 
+	/**
+	 * Konstruktor kompilatoru
+	 * 
+	 * @param instrString
+	 *            String instrukci v textove podobe
+	 */
 	public InstructionCompiler(String instrString) {
 		System.out.println(instrString);
 		this.instrString = instrString;
@@ -26,6 +41,11 @@ public class InstructionCompiler {
 		this.labTable = new HashMap<String, Integer>();
 	}
 
+	/**
+	 * 
+	 * @return pole bytu bytecodu, ktere ma byt primo zapsano do souboru jako
+	 *         binarka pro spusteni
+	 */
 	public byte[] generate() {
 		generateInstructionList();
 		processLabels();
@@ -33,6 +53,8 @@ public class InstructionCompiler {
 		byte[] outArr = new byte[byteCodeLength];
 		byte[] arr;
 		int position = 0;
+
+		// projdi vsechny instrukce a pridej je do pole bytu
 		for (IInstruction instr : instrList) {
 			if (instr.getLength() != 0) {
 				arr = instr.getBytes();
@@ -46,6 +68,9 @@ public class InstructionCompiler {
 		return outArr;
 	}
 
+	/**
+	 * Metoda projde seznam instrukci a napocita si pozice labelu v bytecodu
+	 */
 	private void processLabels() {
 
 		// napocitam si pozice labelu v bytecodu
@@ -59,7 +84,7 @@ public class InstructionCompiler {
 			}
 			position += instr.getLength();
 		}
-		byteCodeLength = position;
+		byteCodeLength = position; // nastav delku finalniho bytecodu
 
 		// projdu znovu instrukce a nastavim vsem jumpum adresu labelu
 		for (IInstruction instr : instrList) {
@@ -72,20 +97,26 @@ public class InstructionCompiler {
 		}
 	}
 
+	/**
+	 * Metoda vygeneruje List obsahujici seznam instrukci. Metoda primo zpracuje
+	 * textovy retezec instrukci a pro kazdou instrukci vytvori samostatny
+	 * objekt.
+	 */
 	private void generateInstructionList() {
+		// ctu po tokenech (radcich) string instrukci
 		StringTokenizer st = new StringTokenizer(instrString, "\r\n");
 		String line;
 		IInstruction instruction;
 		while (st.hasMoreTokens()) {
 			line = st.nextToken();
-			instruction = instructionFromLine(line);
+			instruction = instructionFromLine(line);	// vytvorim si instrukci
 			if (instruction != null)
 				instrList.add(instruction);
 		}
 	}
 
 	private IInstruction instructionFromLine(String line) {
-		// odstranit komentare
+		// preskakovat komentare komentare
 		if (line.startsWith(";"))
 			return null;
 
@@ -160,7 +191,8 @@ public class InstructionCompiler {
 			return new GenericInstruction(IInstruction.STOP_INSTR,
 					(Integer) null);
 		}
-		if (line.endsWith(":")) {	// jedina instrukce LABEL  je jedno jak zacina, ale musi koncit dvojteckou
+		if (line.endsWith(":")) { // jedina instrukce LABEL je jedno jak zacina,
+									// ale musi koncit dvojteckou
 			return new LabelInstruction(line);
 		}
 		return null;
