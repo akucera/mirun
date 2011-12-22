@@ -71,7 +71,7 @@ public class ForTree extends AvailableTree {
         ctx.removeAttr("lab");
         body.generate(ctx);
         step.generate(ctx);
-        ctx.println("goto " + lab2);
+        ctx.println("jmp " + lab2);
         ctx.println(lab1 + ":");
     }
 
