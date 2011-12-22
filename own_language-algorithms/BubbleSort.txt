@@ -9,7 +9,7 @@ eralced;
 string inputfile = "dataBubbleSort.dat";
 array int inputdata 100;
     
-	readfile(inputfile; inputdata);
+	call readfileintarr(inputfile; inputdata);
 	
 	for (int i = 0; i < length(inputdata) - 1; i = i + 1;){	
 	  for (int j = 0; j < length(inputdata) - 1 - i; j = j + 1;){               
