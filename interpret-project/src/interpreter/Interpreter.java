@@ -419,6 +419,9 @@ public class Interpreter {
 
 		Util.debugMsg("  Push value from address " + addr + " (" + o
 				+ ") to stack");
+		
+		if(Main.DEBUG) s.printStack();
+		if(Main.DEBUG) env.printMemory();
 	}
 
 	/*
@@ -717,7 +720,7 @@ public class Interpreter {
 		Integer address = bc.nextInteger();
 
 		StaticMethod method = methodTable.method(address);
-		Util.debugMsg("  Calling method \"" + method.getName() + "\"");
+		Util.debugMsg("  Calling method " +address+ " \"" + method.getName() + "\"");
 		method.perform();
 	}
 	

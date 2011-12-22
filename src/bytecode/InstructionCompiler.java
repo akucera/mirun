@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import tree.Type;
+import tree.MethodDeclarationTree.ReturnType;
+
+import bytecode.instruction.CallInstruction;
 import bytecode.instruction.ConstDefInstruction;
 import bytecode.instruction.GenericInstruction;
 import bytecode.instruction.GenericJmpInstruction;
@@ -28,6 +32,8 @@ public class InstructionCompiler {
 	private Map<String, Integer> labTable;
 	private int byteCodeLength;
 
+	private Map<String, Integer> mAddrTable = new HashMap<String, Integer>();
+
 	/**
 	 * Konstruktor kompilatoru
 	 * 
@@ -39,6 +45,16 @@ public class InstructionCompiler {
 		this.instrString = instrString;
 		this.instrList = new ArrayList<IInstruction>();
 		this.labTable = new HashMap<String, Integer>();
+		initMethodsTable();
+	}
+
+	private void initMethodsTable() {
+		mAddrTable.put("print", new Integer(0));
+		mAddrTable.put("println", new Integer(1));
+		mAddrTable.put("readfileint", new Integer(10));
+		mAddrTable.put("readfileintarr", new Integer(11));
+		mAddrTable.put("writetofile", new Integer(20));
+		mAddrTable.put("appendtofile", new Integer(21));
 	}
 
 	/**
@@ -109,7 +125,7 @@ public class InstructionCompiler {
 		IInstruction instruction;
 		while (st.hasMoreTokens()) {
 			line = st.nextToken();
-			instruction = instructionFromLine(line);	// vytvorim si instrukci
+			instruction = instructionFromLine(line); // vytvorim si instrukci
 			if (instruction != null)
 				instrList.add(instruction);
 		}
@@ -182,7 +198,7 @@ public class InstructionCompiler {
 			return new GenericJmpInstruction(IInstruction.JEGT_INSTR, line);
 		}
 		if (line.startsWith(IInstruction.CALL_INSTR_NAME)) {
-			return new GenericInstruction(IInstruction.CALL_INSTR, line);
+			return new CallInstruction(line, mAddrTable);
 		}
 		if (line.startsWith(IInstruction.CONSTDEF_INSTR_NAME)) {
 			return new ConstDefInstruction(line);

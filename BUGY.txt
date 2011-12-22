@@ -1,0 +1,30 @@
+spatne porovnani pri    <    a <=
+ for(int r = 0; r < 10; r = r + 1;) ... preleze az na to
+  for(int r = 0; r <= 10; r = r + 1;) ... nepreleze
+zrejme spatny for. Musi se po kroku pricist a pak vyhodnocovat zvysene cislo, aby se nesahalo do bloku
+Celkove chyby v porovnavanich. For cykly pretekaji podminku
+
+
+int i = 999;
+if(i == 999) {
+	call println("true");
+}
+pushc 999
+pop 4
+pushv 4
+pushc 999
+jeq lab3
+pushsc 2
+call println
+lab3:
+neprintne, skace az za volani, to by nemelo
+
+== a != se chovaji presne obracene, spatne se generuji instrukce.
+Pri jeq se musi skocit na label, obsahu bloku nesmi byt hned za jeq. pokud an
+
+METODA NEMUZE DOSTAT JAKO PARAMETR POLE
+[3,36] expected: RPAR, found: ARRAYVAR
+
+DEFINICE POLE
+- nejde definovat pole s velikosti dle promenne
+pr:  "array int prices 4;"  jde, ale "array int prices problemsize;" nejde
