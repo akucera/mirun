@@ -3,7 +3,7 @@ program Knapsack;
 methods
 
 method void bruteBag(int pos; int maxWeightLeft; int cost;) {
-		
+
 		if (maxWeightLeft < 0){
             return;
             }
@@ -48,7 +48,7 @@ array int inputdata 50;
 string outputfile = "output_" + inputfile;
 string output = " ";
     
-	readfile(inputfile; inputdata);
+	call readfileintarr(inputfile; inputdata);
 	
 	for (int i = 0; i < length(inputdata); i = i + 1;){
 	
@@ -63,10 +63,10 @@ string output = " ";
        }	  
 	  
 	  itemsCount = itemsCount - 1;
-	  call bruteBag(itemsCount; maxWeight; 0;)
+	  call bruteBag(itemsCount; maxWeight; 0;);
 	  output = bestCost + "  " + [0]best + "  " + [1]best + "  "  + [2]best + "  "  + [3]best + "newLine";	  
 	 }	 
 	
-	writefile(output; outputfile);
+	call writefile(output; outputfile);
 
 margorp;
