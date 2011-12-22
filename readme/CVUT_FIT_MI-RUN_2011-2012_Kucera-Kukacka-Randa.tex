@@ -1,0 +1,177 @@
+\documentclass[a4paper,12pt,titlepage]{article}
+\usepackage[cp1250]{inputenc}
+\usepackage{graphicx}
+\usepackage{epsf,epic,eepic,eepicemu}
+\usepackage{subfig}
+\usepackage{url}
+\usepackage{multirow}
+
+\oddsidemargin=-5mm
+\evensidemargin=-5mm
+\marginparwidth=.08in
+\marginparsep=.01in
+\marginparpush=5pt
+\topmargin=-15mm
+\headheight=12pt
+\headsep=25pt
+\footskip=30pt
+\textheight=25cm
+\textwidth=17cm
+\columnsep=2mm
+\columnseprule=1pt
+\parindent=15pt
+\parskip=2pt
+
+\begin{document}
+  \begin{center}
+  \bf Semestrální práce MI-RUN 2011/2012\\[5mm]
+  Implementace vlastního jazyka\\[5mm]
+  Adam Kuèera\\[2mm]
+  Lukáš Kukaèka\\[2mm]
+  Jan Øanda\\[2mm]
+  magisterské studium\\[2mm]
+  Èeské vysoké uèení technické v Praze\\[2mm]
+  Fakulta informaèních technologií\\[2mm]
+  Thákurova 9, 160 00 Praha 6\\[2mm]
+  \today
+  \end{center}
+%-----------------------------------------------------------------------------------------------------
+\section{Zadání}
+
+Your task is to write a program solving one of problems listed below:
+
+\begin{itemize}
+  \item Knapsack problem solver - \url{http://en.wikipedia.org/wiki/Knapsack_problem}
+  \item SAT solver - \url{http://en.wikipedia.org/wiki/Boolean_satisfiability_problem}
+  \item Simple SUDOKU solver
+  \item Simple key-value store using B+ trees
+  \item Regular expression matcher/replacer
+  \item Unix utility: grep (no need for regexp support)
+  \item LISP interpreter
+  \item Something like problems above. You may choose your own (but the lab-leader must agree on, indeed)  
+\end{itemize}
+
+“Sounds like problems for introductory programming courses, so what's the trick” you may think. Let's make it more challenging:
+
+\begin{itemize}
+  \item Program should take its input from a file and prints output to another file, specified on command line. Input and output files should be human-readable/writable. There are no other requirements on the format except that.
+  \item Program must be written in a programming language implemented by yourself, i.e. you must first design and implement a programming language interpreter or compiler and a runtime for it and then implement a solution of one of the above problems in it. You may design your own language or you may implement a (subset of) existing one - it is up to you.
+  \item You may work in teams, max team size is 2 people.
+  \item You may use any language you want to implement your programming language runtime.    
+\end{itemize}
+
+Do not spend much time on parsing. Use some kind of compiler-compiler tool: yacc/bison, javacc, antlr, smaCC, petitparser.
+
+\subsection{Odevzdání}
+
+To submit your project, send an email to your lab leader with your project attached as a zip archive.
+
+\begin{itemize}
+  \item The subject of submissio email must starts with [MI-RUN Project Submission] (exactly like this, including square brackes) - this helps us to automatically process your emails. Otherwise, your email may get lost in hundreds of other emails we receive.
+  \item The attached filename should be in form of mi-run-<username>.zip (mi-run-<username1>-<username2>.zip respectively) where <username> is CVUT user name of the author (authors, respectively)
+  \item The .zip archive should contain all the sources plus a script/makefile compile your project WITHOUT running an IDE. A makefile for GNU Make, nmake, build.xml for Apache ANT, Rakefile for Rake or similar is just fine (please, try to use something commonly used - it saves us a lot of time).
+  \item short README.txt describing:
+  \begin{itemize}
+    \item how to compile it
+    \item format of input and output files
+  \end{itemize}  
+  \item some sample input files      
+\end{itemize}
+%-----------------------------------------------------------------------------------------------------
+\section{Spuštìní algoritmu pomocí jazyka}
+
+
+
+%-----------------------------------------------------------------------------------------------------
+\section{Popis jazyka}
+
+Jazyk byl napsán v jazyce Java.
+
+Parametry programu:
+  \begin{itemize}
+    \item program mùže pøijímat textové argumenty (napø. pro vstupní a výstupní soubor)
+    \item argumentù je povoleno 10
+    \item z jazyka se k argumentùm programu pøistupuje pøes speciální konstrukci
+    \item argumenty jsou ukládány v tabulce konstant na adresách 0 až 9    
+  \end{itemize}    
+%-----------------------------------------------------------------------------------------------------
+\newpage
+\begin{center}
+    \begin{tabular}{|c|c|p{8cm}|}
+    \hline
+    \multicolumn{3}{|c|}{Tabulka instrukcí} \\
+    \hline
+    Instrukce & HEX & Popis \\ \hline
+    pushc [cislo] & 0x11 & vložit èíselnou konstantu (hodnotu) na zásobník \\ \hline
+    pushv [adresa - èíslo] & 0x12 & vložit promìnnou (adresu) na zásobník, podívá se na tabulku promìnných a hodnotu vloží na zásobník \\ \hline
+    pushsc [adresa] & 0x13 & vloží na zásobník Object string z tabulky konstant\\ \hline
+    pop [adresa] & 0x01 & vyjmutí ze zásobníku a uložení na adresu slotu, vezme hodnotu z vrcholu zásobníku a uloží ji na adresu \\ \hline
+    arrdef [adresa pole] & 0x20 & na zásobníku je poèet položek, po provedeni je pole na teto adrese \\ \hline
+    arrpop [adresa pole] & 0x2A & vloží hodnotu do pole na adrese, nejvyšší hodnota zas = index v poli, 2. nejvyšší hodnota zas = hodnota \\ \hline
+    arrpush [adresa pole] & 0x2F & z pole na adrese vloží hodnotu na vrchol zásobníku, nejvyšší hodnota zas = index v poli, vloží hodnotu na zásobníku \\ \hline
+    badd & 0x30 & sèítání (addition), naète 2 nejvyšší hodnoty ze zásobníku, seète a výsledek vloží na zásobník \\ \hline
+    bsub & 0x31 & odèítání (substraction), naète 2 nejvyšší hodnoty ze zásobníku, odeète a výsledek vloží na zásobník \\ \hline
+    bmul & 0x32 & násobení (multiplication), naète 2 nejvyšší hodnoty ze zásobníku, vynásobí a výsledek vloží na zásobník \\ \hline
+    lab1: (aa:, fff4:, ...) & 0xA0 & návìští (identifikátor a dvojteèka) \\ \hline
+    mjmp [návìští] & 0x40 & skoèí na návìští metody, vytvoøí kopii environmentu, vloží do stacku enviromentu a nastaví callstack \\ \hline
+    mret & 0x4F & ukonèení metody, výsledek je na zásobníku, po zavolání se vrací dle callstacku na pozici callstack + 1 \\ \hline
+    jmp [návìští] & 0x50 & nepodmínìný skok \\ \hline
+    jeq [návìští] & 0x5A & podmínìný skok, skáèe, když 2 nejvyšší hodnoty na zásobníku jsou stejné \\ \hline
+    jneq [návìští] & 0x5B & skok, když nejsou stejné \\ \hline
+    jlt [návìští] & 0x5C & skok, když nejvyšší hodnota na zásobníku je menší nez 2 nejvyšší \\ \hline
+    jgt [návìští] & 0x5D & skok, když nejvyšší hodnota na zásobníku je vìtší než 2 nejvyšší \\ \hline
+    jelt [návìští] & 0x5E & menší nebo rovno \\ \hline
+    jegt & 0x5F & vìtší nebo rovno \\ \hline
+    constdef [adresa] [1...n bytu] 0xCE & 0xCD & definuje textovou konstantu, první Integer adresa, druhý délka stringu, potom se ètou byty, ze kterých se sestaví string až do ukonèovacího bytu 0xCE (nepatri ke stringu) \\ \hline
+    call [adresa v method table] & 0xCA & volání statické metody (metoda interpretru) na adrese v tabulce metod \\ \hline
+    stop & 0xFF & ukonèení programu \\ \hline
+    \end{tabular}
+\end{center}
+%-----------------------------------------------------------------------------------------------------
+\newpage
+TABULKA KONSTANT
+	- na zacatku bytecodu
+	- instrukce CONSTDEF
+
+\begin{center}
+    \begin{tabular}{|c|c|c|p{8cm}|}
+    \hline
+    \multicolumn{4}{|c|}{Tabulka konstant} \\
+    \hline
+    Název & Adresa DEC & Adresa HEX & Popis, parametry \\ \hline
+    print & 0 & 0x00 & vytiskne objekt z vrcholu zásobníku na výstup pomocí Object.toString() bez odøádkování (jako java System.out.print()) \\ \hline
+    println & 1 & 0x01 & vytiskne objekt z vrcholu zásobníku na výstup pomocí Object.toString() bez odøádkování (jako java System.out.println()) \\ \hline
+    readfileint & 10 & 0x0A & naète ze souboru jeden (první) Integer na zásobník, 1. na zásobníku = název souboru, pokud se nìco nepodaøí (soubor neexistuje), interpreter skonèí \\ \hline
+    readfileintarr & 11 & 0x0B & naète ze souboru pole Integeru do promìnné, 1. na zásobníku = název souboru, 2. na zásobníku = adresa pole \\ \hline
+    writetofile & 20 & 0x14 & zapíše do souboru objekt ze zásobníku pomocí (Object.toString()), 1. na zásobníku = název souboru, 2. na zásobníku = objekt k zapsání \\ \hline
+    appendtofile & 21 & 0x15 & pøipojí objekt z vrcholu zásobníku na konec souboru (Object.toString()), 1. na zásobníku = název souboru, 2. na zásobníku = objekt k zapsaní \\ \hline
+   
+    \end{tabular}    
+\end{center}
+%-----------------------------------------------------------------------------------------------------
+\subsection{Interpret}
+%-----------------------------------------------------------------------------------------------------
+\subsection{Bytecode}
+%-----------------------------------------------------------------------------------------------------
+\subsection{Lexer}
+%-----------------------------------------------------------------------------------------------------
+\subsection{Compiler}
+%-----------------------------------------------------------------------------------------------------
+\subsection{Vlastní algoritmy}
+
+Pro otestování funkènosti jazyka jsme zvolili následující algoritmy:
+
+ \begin{itemize}
+    \item Hello World
+    \item EvenOddNumber
+    \item FindLargestSmallestNumber
+    \item Bubble sort
+  \end{itemize}
+  
+Ze zadání jsme pak zvolili implementaci problému batohu (Backpack - Knapsack problem).
+
+
+
+
+%-----------------------------------------------------------------------------------------------------
+\end{document} 
