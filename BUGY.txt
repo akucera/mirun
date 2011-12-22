@@ -28,3 +28,11 @@ METODA NEMUZE DOSTAT JAKO PARAMETR POLE
 DEFINICE POLE
 - nejde definovat pole s velikosti dle promenne
 pr:  "array int prices 4;"  jde, ale "array int prices problemsize;" nejde
+
+DELKA POLE
+- nejde for (int i = 0; i < length(inputdata) - 1; i = i + 1;)
+- jakmile to dojde k length, tak napise:
+[14,22][14,28] unknown identifier: length
+[14,28] expected: SEMICOLON, found: LPAR
+-uz v definici antlr to je zakomentovany a nevim zda to Adam nedelal zamerne
+
