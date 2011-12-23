@@ -59,6 +59,7 @@ public class AssignmentTree extends AvailableTree {
     	if (fromStack) {
     		switch (identifier.getType()) {
 				case INTVAR:
+				case ARRAYVAR:
 					ctx.println("pop " + identifier.getVarAddress());
 					break;
 				case STRINGVAR:

@@ -183,7 +183,7 @@ public class Parser {
 	 * program : PROG ID SEMICOLON METHODS methodDeclarations ENDMETHODS SEMICOLON DECLARATION declarationBlock ENDDECLARATION SEMICOLON bodyList ENDPROG SEMICOLON;
 	 */
 	ProgramTree program() {
-		symTab = new SymTab();
+		symTab = new SymTab(null);
 		constTab = new ConstTab();
 		methodTab = new MethodTab();
 		Position p1 = lexer.getBeginPosition();
@@ -306,7 +306,7 @@ public class Parser {
 			accept(LPAR);
 			List<Type> paramTypes = new ArrayList<Type>();
 			List<AssignmentTree> paramsList = new ArrayList<AssignmentTree>();
-			SymTab paramSymTab = new SymTab();
+			SymTab paramSymTab = new SymTab(this.symTab);
 			params(paramTypes, paramsList, paramSymTab);
 			accept(RPAR);
 			accept(LBRACE);
@@ -522,15 +522,19 @@ public class Parser {
 	 *        | ;
 	 */
 	void params(List<Type> paramTypes, List<AssignmentTree> paramsList, SymTab paramSymTab) {
-		Position p1 = lexer.getBeginPosition();
+		Position p1 = lexer.getBeginPosition(), pident, p2;
+		Type type;
+		String n;
+		IdentifierTree i;
+		AssignmentTree a;
 		switch (token) {
 			case INTVAR:
 			case STRINGVAR:
-				Type type = varType();
-				String n = lexer.getIdentifier();
-				Position pident = lexer.getBeginPosition();
+				type = varType();
+				n = lexer.getIdentifier();
+				pident = lexer.getBeginPosition();
 				accept(ID);
-				Position p2 = lexer.getLastEndPosition();
+				p2 = lexer.getLastEndPosition();
 				VariableTree v = new VariableTree(p1, p2, n);
 				v.setType(type);
 				paramTypes.add(type);
@@ -539,10 +543,31 @@ public class Parser {
 				} else {
 					paramSymTab.insert(v);
 				}
-				IdentifierTree i = new IdentifierTree(pident, p2, n);
+				i = new IdentifierTree(pident, p2, n);
 				i.setVariable(v);
 				i.setLeftValue(true);
-				AssignmentTree a = new AssignmentTree(p1, p2, i, null, null, false, true);
+				a = new AssignmentTree(p1, p2, i, null, null, false, true);
+				paramsList.add(0, a);
+				paramsRest(paramTypes, paramsList, paramSymTab);
+				break;
+			case ARRAYVAR:
+				type = varType();
+				n = lexer.getIdentifier();
+				pident = lexer.getBeginPosition();
+				accept(ID);
+				p2 = lexer.getLastEndPosition();
+				ArrayTree arrTree = new ArrayTree(p1, p2, n, null);
+				arrTree.setType(type);
+				paramTypes.add(type);
+				if (paramSymTab.contains(arrTree.getName())) {
+					semanticError(arrTree.getStart(), arrTree.getEnd(), arrTree.getName() + " is already declared");
+				} else {
+					paramSymTab.insert(arrTree);
+				}
+				i = new IdentifierTree(pident, p2, n);
+				i.setVariable(arrTree);
+				i.setLeftValue(true);
+				a = new AssignmentTree(p1, p2, i, null, null, false, true);
 				paramsList.add(0, a);
 				paramsRest(paramTypes, paramsList, paramSymTab);
 				break;
@@ -575,6 +600,9 @@ public class Parser {
 		case STRINGVAR:
 			accept(STRINGVAR);
 			return Type.STRINGVAR;
+		case ARRAYVAR:
+			accept(ARRAYVAR);
+			return Type.ARRAYVAR;
 		default:
 			error("expected: INTVAR | STRINGVAR, found: " + token);
 			throw new ParserException();

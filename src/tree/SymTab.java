@@ -15,11 +15,11 @@ import compiler.AddressResolver;
  */
 public class SymTab {
 	
-//	private ConstTab constTab;
-//	
-//	public SymTab(ConstTab constTab) {
-//		this.constTab = constTab;
-//	}
+	private SymTab parentTab;
+	
+	public SymTab(SymTab parentTab) {
+		this.parentTab = parentTab;
+	}
 	
     /**
      * Tabulka promennych.
@@ -42,7 +42,11 @@ public class SymTab {
      * Vrati promennou z tabulky symbolu.
      */
     public VariableTree find(String name) {
-        return ids.get(name.toLowerCase());
+    	VariableTree retTree = ids.get(name.toLowerCase());
+    	if ((retTree == null) && (parentTab != null)) {
+    		retTree = parentTab.find(name);
+    	}
+        return retTree;
     }
 
     /**
