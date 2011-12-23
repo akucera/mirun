@@ -59,7 +59,10 @@ public class MethodTree extends ExpressionTree {
     @Override
     public void generate(Context ctx) {
         for(ExpressionTree e : params){
+        	ctx.println("; Zacatek parametru metody "+methodName);
             e.generate(ctx);
+            // TODO bug negeneruji se parametry metody length
+            ctx.println("; Konec parametru metody "+methodName);
         }
         ctx.println("call " + methodName);
     }
