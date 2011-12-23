@@ -9,7 +9,6 @@ import static compiler.Token.ARRAYVAR;
 import static compiler.Token.ASSIGN;
 import static compiler.Token.CALL;
 import static compiler.Token.DECLARATION;
-import static compiler.Token.DIVIDED;
 import static compiler.Token.ENDDECLARATION;
 import static compiler.Token.ENDMETHODS;
 import static compiler.Token.ENDPROG;
@@ -657,7 +656,6 @@ public class Parser {
 	 * assignment : ID ASSIGN vyraz SEMICOLON;
 	 *
 	 */
-	// TODO tady je BUG, kdyz chci volat metodu v prirazeni, musim dat 2x strednik
 	AssignmentTree assignment(SymTab symTab) {
 		Position p1 = lexer.getBeginPosition();
 		String n = lexer.getIdentifier();
@@ -734,11 +732,6 @@ public class Parser {
 		ArrayTree arrTree = (ArrayTree) v;
 		return new ArrayAccessorTree(p1, p2, arrTree, accE, accM, isAccess);
 	}
-	
-	// TODO other static functions	
-	//	length			:	LENGTH LPAR ID RPAR;
-	//	rofl			:	ROFL LPAR stringId SEMICOLON ID RPAR SEMICOLON;
-	//	wtf			:	WTF LPAR ID SEMICOLON stringId RPAR SEMICOLON;
 
 	/*
 	 * methodCall :	CALL ID LPAR methodCallParams RPAR SEMICOLON?;

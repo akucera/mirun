@@ -34,7 +34,7 @@ public class Compiler {
 	/**
 	 * Pouzit optimalizator?
 	 */
-	private boolean optimize;
+	//private boolean optimize;
 
 	public Compiler() {
 	}
@@ -70,7 +70,7 @@ public class Compiler {
 		pw.write(sw.toString());
 		pw.close();
 		// docasne vypis instrukce na konzoli
-		System.out.println(sw.toString());
+		//System.out.println(sw.toString());
 
 		// vytvor compilator bytecodu z instrukci
 		InstructionCompiler compiler = new InstructionCompiler(sw.toString());
@@ -80,6 +80,7 @@ public class Compiler {
 		fos.write(compiler.generate());
 		fos.close();
 
+		System.out.println("Bytecode successfully built. Output file name: \""+dest+"\"");
 	}
 
 	// TODO IOC

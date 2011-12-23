@@ -38,7 +38,7 @@ public class InstructionCompiler {
 	 *            String instrukci v textove podobe
 	 */
 	public InstructionCompiler(String instrString) {
-		System.out.println(instrString);
+		//System.out.println(instrString);
 		this.instrString = instrString;
 		this.instrList = new ArrayList<IInstruction>();
 		this.labTable = new HashMap<String, Integer>();
@@ -94,7 +94,7 @@ public class InstructionCompiler {
 			if (instr.getClass() == LabelInstruction.class) {
 				String labelName = ((LabelInstruction) instr).getName();
 				labTable.put(labelName, new Integer(position));
-				System.out.println("Label " + labelName + " addr: " + position);
+				//System.out.println("Label " + labelName + " addr: " + position);
 			}
 			position += instr.getLength();
 		}

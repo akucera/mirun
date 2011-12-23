@@ -772,7 +772,7 @@ public class Interpreter {
 			s.printStack();
 			env.printMemory();
 		}
-		
+		//s.printStack();
 		// varTable.printMemory();
 		System.exit(0);
 	}
