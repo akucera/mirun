@@ -1,49 +1,11 @@
-; Compiled on Dec 21, 2011 3:59:18 PM
-constdef 0 ahoj svete
-constdef 1 ahoj vole
+; Compiled on Dec 23, 2011 10:11:47 AM
+jmp mainProgram
+pokus:
+pop 0
+pushv 0
+call println
+mret
+mainProgram:
 pushc 10
-arrdef 0
-pushc 0
-pushc 0
-arrpop 0
-pushc 1
-pushc 1
-arrpop 0
-pushc 2
-pushc 2
-arrpop 0
-pushc 3
-pushc 3
-arrpop 0
-pushc 4
-pushc 4
-arrpop 0
-pushc 5
-pushc 5
-arrpop 0
-pushc 6
-pushc 6
-arrpop 0
-pushc 7
-pushc 7
-arrpop 0
-pushc 8
-pushc 8
-arrpop 0
-pushc 9
-pushc 9
-arrpop 0
-pushc 0
-pop 1
-pushc 999
-pop 2
-pushc 5
-pop 3
-pushv 3
-pushc 1
-badd
-arrpush 0
-pop 4
-pushv 2
-pop 5
+mjmp pokus
 stop

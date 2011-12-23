@@ -14,11 +14,13 @@ public class AssignmentTree extends AvailableTree {
     private ExpressionTree expression;
     private MethodTree method;
     private boolean leftMethod;
+    private boolean fromStack;
 
-    public AssignmentTree(Position start, Position end, IdentifierTree identifier, ExpressionTree expression, MethodTree method, boolean leftMethod) {
+    public AssignmentTree(Position start, Position end, IdentifierTree identifier, ExpressionTree expression, MethodTree method, boolean leftMethod, boolean fromStack) {
         super(start, end);
         this.identifier = identifier;
         this.leftMethod = leftMethod;
+        this.fromStack = fromStack;
         if (leftMethod) {
             this.method = method;
         } else {
@@ -54,19 +56,30 @@ public class AssignmentTree extends AvailableTree {
     // TODO nehaze parametry na zasobnik
     @Override
     public void generate(Context ctx) {
-        if (leftMethod) {
-            method.generate(ctx);
-        } else {
-            switch (identifier.getType()) {
-                case INTVAR:
-                    expression.generate(ctx);
-                    ctx.println("pop " + identifier.getVarAddress());
-                    break;
-                case STRINGVAR:
-                	// string is in constant table
-                	break;
-            }
-        }
+    	if (fromStack) {
+    		switch (identifier.getType()) {
+				case INTVAR:
+					ctx.println("pop " + identifier.getVarAddress());
+					break;
+				case STRINGVAR:
+					// string is in constant table
+					break;
+    		}
+    	} else {
+    		if (leftMethod) {
+    			method.generate(ctx);
+    		} else {
+    			switch (identifier.getType()) {
+	    			case INTVAR:
+	    				expression.generate(ctx);
+	    				ctx.println("pop " + identifier.getVarAddress());
+	    				break;
+	    			case STRINGVAR:
+	    				// string is in constant table
+	    				break;
+    			}
+    		}
+    	}
     }
 
     @Override

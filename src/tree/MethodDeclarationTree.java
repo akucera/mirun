@@ -21,9 +21,10 @@ public class MethodDeclarationTree extends Tree {
     private BodyListTree body;
     private ReturnType returnType;
     private int stackDepth;
+    private List<AssignmentTree> params;
 
     public MethodDeclarationTree(Position start, Position end, String name,
-            ReturnType returnType, List<Type> paramTypes,
+            ReturnType returnType, List<Type> paramTypes, List<AssignmentTree> params,
             BodyListTree body, SymTab symTab) {
         super(start, end);
         this.name = name;
@@ -31,6 +32,7 @@ public class MethodDeclarationTree extends Tree {
         this.paramTypes = paramTypes;
         this.body = body;
         this.symTab = symTab;
+        this.params = params;
     }
 
     public int getStackDepth() {
@@ -57,6 +59,9 @@ public class MethodDeclarationTree extends Tree {
     @Override
     public void generate(Context ctx) {
         ctx.println(name + ":");
+        for (AssignmentTree a : params) {
+        	a.generate(ctx);
+        }
         body.generate(ctx);
     }
 

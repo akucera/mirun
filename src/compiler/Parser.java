@@ -305,8 +305,9 @@ public class Parser {
 			accept(ID);
 			accept(LPAR);
 			List<Type> paramTypes = new ArrayList<Type>();
+			List<AssignmentTree> paramsList = new ArrayList<AssignmentTree>();
 			SymTab paramSymTab = new SymTab();
-			params(paramTypes, paramSymTab);
+			params(paramTypes, paramsList, paramSymTab);
 			accept(RPAR);
 			accept(LBRACE);
 			BodyListTree body = bodyList(paramSymTab);
@@ -319,7 +320,7 @@ public class Parser {
 				semanticError(p1, p2, id + " method is already declared");
 			}
 			methodTab.insert(id, r, paramTypes);
-			methods.add(new MethodDeclarationTree(p1, p2, id, r, paramTypes, body, paramSymTab));
+			methods.add(new MethodDeclarationTree(p1, p2, id, r, paramTypes, paramsList, body, paramSymTab));
 		}
 	}
 
@@ -377,7 +378,7 @@ public class Parser {
 			constTab.matchVariableToConstant(v);
 		ExpressionTree e = vyraz(symTab);
 		accept(SEMICOLON);
-		AssignmentTree a = new AssignmentTree(p1, p2, i, e, null, false);
+		AssignmentTree a = new AssignmentTree(p1, p2, i, e, null, false, false);
 		return new VariableDeclarationTree(p1, p2, a);
 	}
 
@@ -519,13 +520,14 @@ public class Parser {
 	 * params :	varType ID paramsRest
 	 *        | ;
 	 */
-	void params(List<Type> paramTypes, SymTab paramSymTab) {
+	void params(List<Type> paramTypes, List<AssignmentTree> paramsList, SymTab paramSymTab) {
 		Position p1 = lexer.getBeginPosition();
 		switch (token) {
 			case INTVAR:
 			case STRINGVAR:
 				Type type = varType();
 				String n = lexer.getIdentifier();
+				Position pident = lexer.getBeginPosition();
 				accept(ID);
 				Position p2 = lexer.getLastEndPosition();
 				VariableTree v = new VariableTree(p1, p2, n);
@@ -536,7 +538,12 @@ public class Parser {
 				} else {
 					paramSymTab.insert(v);
 				}
-				paramsRest(paramTypes, paramSymTab);
+				IdentifierTree i = new IdentifierTree(pident, p2, n);
+				i.setVariable(v);
+				i.setLeftValue(true);
+				AssignmentTree a = new AssignmentTree(p1, p2, i, null, null, false, true);
+				paramsList.add(0, a);
+				paramsRest(paramTypes, paramsList, paramSymTab);
 				break;
 			default:
 				break;
@@ -548,10 +555,10 @@ public class Parser {
 	 * paramsRest : SEMICOLON params
 	 * 			  | ;
 	 */
-	void paramsRest(List<Type> paramTypes, SymTab paramSymTab) {
+	void paramsRest(List<Type> paramTypes, List<AssignmentTree> paramsList, SymTab paramSymTab) {
 		if (token != RPAR) {
 			accept(SEMICOLON);
-			params(paramTypes, paramSymTab);
+			params(paramTypes, paramsList, paramSymTab);
 		}
 		return;
 	}
@@ -639,12 +646,12 @@ public class Parser {
 			MethodTree m = methodCall(symTab, true);
 			accept(SEMICOLON);
 			Position p3 = lexer.getLastEndPosition();
-			return new AssignmentTree(p1, p3, i, null, m, true);
+			return new AssignmentTree(p1, p3, i, null, m, true, false);
 		}
 		ExpressionTree e = vyraz(symTab);
 		accept(SEMICOLON);
 		Position p3 = lexer.getLastEndPosition();
-		return new AssignmentTree(p1, p3, i, e, null, false);
+		return new AssignmentTree(p1, p3, i, e, null, false, false);
 	}
 	
 	/*
@@ -723,7 +730,10 @@ public class Parser {
 			semanticError(p1, p2, n + " method is not declared nor built-in language method");
 			return null;
 		}
-		return new MethodTree(p1, p2, this.name, n, methodTab.find(n), methodTab.findParamTypes(n), e, isRight);
+		MethodTree methodTree = new MethodTree(p1, p2, this.name, n, methodTab.find(n), methodTab.findParamTypes(n), e, isRight);
+		if (builtInMethods.contains(n))
+			methodTree.setStatic(true);
+		return methodTree;
 	}
 
 	/*
