@@ -1,10 +1,21 @@
 program TestovaciKod;
 methods
 
+method void pokus(int i;) {
+	call print("I je ");
+	call println(i);
+	return;
+}
+
 sdohtem;
 
 declare
 eralced;
+
+pokus(111);
+
+array int vstup 9;
+call readfileintarr("vstupnisoubor.txt";vstup);
 
 array int inputarr 9;
 [0]inputarr = 100;
@@ -20,8 +31,7 @@ array int inputarr 9;
 int problemsize = 4;
 array int prices 4;
 array int weights 4;
-int delka = 0;
-delka = call length(prices);;
+int delka = 4;
 
 int capacity = [0]inputarr;
 
