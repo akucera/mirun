@@ -112,7 +112,7 @@ import exception.VariableNotFoundException;
  */
 public class Interpreter {
 
-	private static final int MAX_STACK_SIZE = 1024;
+	private static final int MAX_STACK_SIZE = 2048;
 
 	protected Bytecode bc;
 	private Date startTime;
@@ -387,9 +387,11 @@ public class Interpreter {
 	 */
 	private void doPopInstruction() throws BytecodeOverflowException,
 			EmptyStackPopException {
+		//s.printStack();
 		Integer addr = bc.nextInteger();
-		Integer value = ((Integer) s.pop()).intValue();
-
+		//Integer value = ((Integer) s.pop()).intValue();
+		Object value = s.pop();
+		
 		// varTable.setVariable(addr, value);
 		env.setVariable(addr, value);
 
@@ -563,6 +565,8 @@ public class Interpreter {
 		Util.debugMsg("   Callstack return address set to " + bc.position());
 		env.pushLevel();
 		bc.jumpTo(methodAddr);
+		
+		//env.printMemory();
 
 		Util.debugMsg("   Method jump to address " + methodAddr);
 	}
@@ -768,6 +772,7 @@ public class Interpreter {
 			s.printStack();
 			env.printMemory();
 		}
+		
 		// varTable.printMemory();
 		System.exit(0);
 	}

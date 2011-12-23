@@ -1,5 +1,7 @@
 package interpreter.staticmethod;
 
+import java.util.Arrays;
+
 import exception.EmptyStackPopException;
 import interpreter.Bytecode;
 import interpreter.Environment;
@@ -20,7 +22,17 @@ public class PrintStaticMethod extends StaticMethod {
 	public void perform() throws EmptyStackPopException {
 		Object o = s.pop();
 		
-		System.out.print(o.toString());
+		String output = "";
+		
+		//env.printMemory();
+		
+		if(o instanceof Object[]) {
+			output = Arrays.toString((Object[])o);
+		}
+		
+		output = o.toString();
+		
+		System.out.print(output);
 	}
 
 }
