@@ -29,6 +29,7 @@ public class ReadFileIntArrStaticMethod extends StaticMethod {
 
 	@Override
 	public void perform() throws EmptyStackPopException, StackOverflowException, ProgramExecutionException {
+		Object target = s.pop();
 		String filename = (String)s.pop();
 		
 		File f = new File(filename);
@@ -37,7 +38,8 @@ public class ReadFileIntArrStaticMethod extends StaticMethod {
 			throw new ProgramExecutionException("File \""+filename+"\" not found in calling function \""+getName()+"\".");
 		}
 		
-		Integer addr = (Integer)s.pop();
+		//Integer addr = (Integer)s.pop();
+		
 		
 		byte[] bytes = new byte[(int) f.length()];
 		FileInputStream fis;
@@ -53,7 +55,8 @@ public class ReadFileIntArrStaticMethod extends StaticMethod {
 			for (int i = 0; i < valueStr.length; i++) 
 			    arr[i] = new Integer(Integer.parseInt(valueStr[i]));
 			
-			env.setVariable(addr, arr);
+			target = arr;
+			//env.setVariable(addr, arr);
 		} catch (FileNotFoundException e) {
 			Util.debugMsg("  File \""+filename+"\" does not exists.");
 			throw new ProgramExecutionException("File \""+filename+"\" not found in calling function \""+getName()+"\".");
