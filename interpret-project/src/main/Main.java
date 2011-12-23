@@ -11,10 +11,9 @@ public class Main {
 	 * @param args
 	 */
 	
-	public static final boolean DEBUG = true; 
+	public static final boolean DEBUG = false; 
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		
 		if(args.length < 1) {
 			System.err.println("Interpreter error:\nBad input. Specify bytecode file as first parameter. Example:\n\tjava -jar RUN-Interpreter.jar program.btc [0-10 program arguments]");

@@ -372,7 +372,6 @@ public class Interpreter {
 			methodTable.registerMethod(20, new WriteToFileStaticMethod("writetofile", bc, s, env));
 			methodTable.registerMethod(100, new LengthStaticMethod("length", bc, s, env));
 		} catch (MethodRedefinitionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -493,8 +492,12 @@ public class Interpreter {
 		Integer addr = bc.nextInteger();
 		Integer index = (Integer) s.pop();
 
+		//s.printStack();
+		//env.printMemory();
+		
 		// Integer value =
 		// (Integer)(((Object[])varTable.getValue(addr))[index]);
+		
 		Integer value = (Integer) (((Object[]) env.getValue(addr))[index]);
 		s.push(value);
 		// arr[index] = value;
@@ -580,6 +583,8 @@ public class Interpreter {
 		// prirazena, cimz
 		// zustane viset v pameti a Java ji uklidi vlastnim garbage collectingem
 		env.popLevel();
+		
+		//env.printMemory();
 
 		Util.debugMsg("   Method return to address " + returnAddr);
 	}
@@ -734,7 +739,6 @@ public class Interpreter {
 		
 		byte b = bc.nextByte();
 		while(b != Bytecode.STRING_END_BYTE) {
-			// TODO pozor na pretypovani byte na char
 			sb.append((char)b);
 			b = bc.nextByte();
 		}

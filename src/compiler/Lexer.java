@@ -154,7 +154,7 @@ public class Lexer {
         	ch = nextChar();
         	while (ch != '"') {
         		if (!Character.isLetter(ch) && !Character.isDigit(ch) && !Character.isWhitespace(ch) &&
-        				(ch != '.') && (ch != '-') && (ch != '_') && (ch != ':') && (ch != '!') && (ch != '\\')  && (ch != '[')  && (ch != ']') && (ch != ',')) {
+        				(ch != '.') && (ch != '-') && (ch != '_') && (ch != ':') && (ch != '!') && (ch != '\\') && (ch != '/')  && (ch != '[')  && (ch != ']') && (ch != ',')) {
         			error("invalid character in string : %c", ch);
         			throw new LexerException();
         		}
