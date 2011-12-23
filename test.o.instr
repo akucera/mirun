@@ -1,11 +1,14 @@
-; Compiled on Dec 23, 2011 10:11:47 AM
+; Compiled on Dec 23, 2011 2:15:55 PM
 jmp mainProgram
 pokus:
 pop 0
-pushv 0
+pushc 1
+arrpush 0
 call println
 mret
 mainProgram:
 pushc 10
+arrdef 1
+pushv 1
 mjmp pokus
 stop

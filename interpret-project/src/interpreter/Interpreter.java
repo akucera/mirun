@@ -531,8 +531,8 @@ public class Interpreter {
 	 */
 	private void doBsubInstruction() throws EmptyStackPopException,
 			StackOverflowException {
-		Integer i1 = (Integer) s.pop();
 		Integer i2 = (Integer) s.pop();
+		Integer i1 = (Integer) s.pop();
 		s.push(new Integer(i2 - i1));
 
 		Util.debugMsg("   Substract " + i2 + " - " + i1 + ", result on stack: "
