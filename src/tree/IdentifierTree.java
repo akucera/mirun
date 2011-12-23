@@ -72,6 +72,9 @@ public class IdentifierTree extends ExpressionTree {
             case STRINGVAR:
             	ctx.println("pushsc " + variable.getAddress());
             	break;
+            case ARRAYVAR:
+            	ctx.println("pushv " + variable.getAddress());
+            	break;
         }
     }
 

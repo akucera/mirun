@@ -2,9 +2,9 @@ package tree;
 
 public class ArrayTree extends VariableTree {
 	
-	protected Integer length;
+	protected ExpressionTree length;
 	
-	public ArrayTree(Position start, Position end, String name, Integer length) {
+	public ArrayTree(Position start, Position end, String name, ExpressionTree length) {
 		super(start, end, name);
 		this.length = length;
 		this.type = Type.ARRAYVAR;
@@ -17,7 +17,8 @@ public class ArrayTree extends VariableTree {
 
     @Override
     public void generate(Context ctx) {
-        ctx.println("pushc " + length);
+    	length.generate(ctx);
+        //ctx.println("pushc " + length);
         ctx.println("arrdef " + address);
     }
 
@@ -26,11 +27,11 @@ public class ArrayTree extends VariableTree {
         return String.format("Array %s: [%s, %s, %d, %d]", super.toString(), name, type, length, address);
     }
 
-	public Integer getLength() {
+	public ExpressionTree getLength() {
 		return length;
 	}
 
-	public void setLength(Integer length) {
+	public void setLength(ExpressionTree length) {
 		this.length = length;
 	}
 }

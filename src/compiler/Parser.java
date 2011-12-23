@@ -383,7 +383,7 @@ public class Parser {
 	}
 
 	/*
-	 * arrayDeclaration	: ARRAYVAR varType ID INT SEMICOLON;
+	 * arrayDeclaration	: ARRAYVAR varType ID vyraz SEMICOLON;
 	 *
 	 */
 	ArrayDeclarationTree arrayDeclaration(SymTab symTab) {
@@ -392,17 +392,18 @@ public class Parser {
 		Type type = varType();
 		String n = lexer.getIdentifier();
 		accept(ID);
-		Integer arrLength;
-		try {
-			arrLength = Integer.valueOf(lexer.getValue().toString());
-		} catch (NumberFormatException e) {
-			semanticError(lexer.getBeginPosition(), lexer.getEndPosition(), n + " has incorrect length (must be int value)!");
-			return null;
-		}
-		accept(INT);
+		ExpressionTree e = vyraz(symTab);
+		//Integer arrLength;
+//		try {
+//			arrLength = Integer.valueOf(lexer.getValue().toString());
+//		} catch (NumberFormatException e) {
+//			semanticError(lexer.getBeginPosition(), lexer.getEndPosition(), n + " has incorrect length (must be int value)!");
+//			return null;
+//		}
+//		accept(INT);
 		accept(SEMICOLON);
 		Position p2 = lexer.getLastEndPosition();
-		ArrayTree arrTree = new ArrayTree(p1, p2, n, arrLength);
+		ArrayTree arrTree = new ArrayTree(p1, p2, n, e);
 		if (symTab.contains(n)) {
 			semanticError(p1, p2, n + " is already declared");
 		} else {

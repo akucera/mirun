@@ -18,11 +18,15 @@ public class LengthStaticMethod extends StaticMethod {
 			ProgramExecutionException, StackOverflowException {
 		Object o = s.pop();
 
-		if (o.getClass() != Object[].class || o.getClass() != Integer[].class)
-			throw new ProgramExecutionException(
-					"Can't get length of non-array object");
+//		if (o.getClass() != Object[].class || o.getClass() != Integer[].class)
+//			throw new ProgramExecutionException(
+//					"Can't get length of non-array object");
 
-		s.push(((Object[]) o).length);
+		try {
+			s.push(((Object[]) o).length);
+		} catch (Exception e) {
+			throw new ProgramExecutionException("Can't get length of non-array object");
+		}
 		
 	}
 

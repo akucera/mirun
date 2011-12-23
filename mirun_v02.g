@@ -44,7 +44,7 @@ declarationBlockRest	:	(varDeclaration|arrayDeclaration) declarationBlockRest
 // deklarace pole ve tvaru
 //	array typ jmeno velikost;
 //	priklad    array int pole 10;
-arrayDeclaration	:	ARRAYVAR varType ID INT SEMICOLON;
+arrayDeclaration	:	ARRAYVAR varType ID vyraz SEMICOLON;
 
 varDeclaration		:	varType ID ASSIGN vyraz SEMICOLON;
 

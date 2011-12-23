@@ -68,8 +68,8 @@ public class BinaryTree extends ExpressionTree {
 
 	@Override
 	public void generate(Context ctx) {
-		leftOperand.generate(ctx);
 		rightOperand.generate(ctx);
+		leftOperand.generate(ctx);
 
 		switch (operator) {
 			case ADD:
@@ -82,22 +82,22 @@ public class BinaryTree extends ExpressionTree {
 				ctx.println("bmul");
 				break;
 			case EQ:
-				ctx.println("jeq " + ctx.getAttr("lab"));
-				break;
-			case NE:
 				ctx.println("jneq " + ctx.getAttr("lab"));
 				break;
+			case NE:
+				ctx.println("jeq " + ctx.getAttr("lab"));
+				break;
 			case LT:
-				ctx.println("jlt " + ctx.getAttr("lab"));
+				ctx.println("jegt " + ctx.getAttr("lab"));
 				break;
 			case GT:
-				ctx.println("jgt " + ctx.getAttr("lab"));
-				break;
-			case LE:
 				ctx.println("jelt " + ctx.getAttr("lab"));
 				break;
+			case LE:
+				ctx.println("jgt " + ctx.getAttr("lab"));
+				break;
 			case GE:
-				ctx.println("jegt " + ctx.getAttr("lab"));
+				ctx.println("jlt " + ctx.getAttr("lab"));
 		}
 	}
 
